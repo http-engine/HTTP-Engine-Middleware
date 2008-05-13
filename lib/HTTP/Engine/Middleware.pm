@@ -27,7 +27,19 @@ no plan :-)
 
 =head1 AUTHOR
 
+Kazuhiro Osawa E<lt>ko@yappo.ne.jpE<gt>
+
+Daisuke Maki
+
 Tokuhiro Matsuno E<lt>tokuhirom@gmail.comE<gt>
+
+nyarla
+
+marcus
+
+hidek
+
+dann
 
 =head1 SEE ALSO
 
