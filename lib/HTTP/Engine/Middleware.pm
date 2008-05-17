@@ -7,6 +7,8 @@ our $VERSION = '0.01';
 1;
 __END__
 
+=for stopwords Daisuke Maki dann hidek marcus nyarla
+
 =encoding utf8
 
 =head1 NAME
