@@ -1,4 +1,12 @@
 use inc::Module::Install;
+
+{
+    no warnings 'redefine';
+    *recommends_hack = $Module::Install::VERSION > 0.70 ?
+        sub { recommends(@_); $_[0] } :
+        \&recommends;
+}
+
 name 'HTTP-Engine-Middleware';
 all_from 'lib/HTTP/Engine/Middleware.pm';
 
@@ -13,6 +21,11 @@ features(
     'DebugScreen' => [
         -default => 0,
         recommends_hack('Carp::Always'),
+    ],
+
+    'DoCoMoGUID' => [
+        -default => 0,
+        recommends_hack('HTML::StickyQuery::DoCoMoGUID'),
     ],
 );
 
