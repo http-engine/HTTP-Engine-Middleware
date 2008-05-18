@@ -2,10 +2,10 @@ use strict;
 use warnings;
 use lib '.';
 use Test::Base;
-plan tests => 3*blocks;
-
 eval q{ use HTTP::Engine middlewares => ['+HTTP::Engine::Middleware::Encode'] };
 plan skip_all => "HTTP::Engine is not installed." if $@;
+
+plan tests => 3*blocks;
 
 use Encode;
 use utf8;
