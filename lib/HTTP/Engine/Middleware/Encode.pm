@@ -6,7 +6,7 @@ use Data::Visitor::Encode;
 sub wrap {
     my ($next, $c) = @_;
 
-    if ($c->req->headers->header('Content-Type') =~ /charset=(.+);?$/) {
+    if (($c->req->headers->header('Content-Type')||'') =~ /charset=(.+);?$/) {
         # decode parameters
         my $encoding = $1;
         my $dve = Data::Visitor::Encode->new;
