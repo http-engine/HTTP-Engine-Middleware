@@ -3,12 +3,12 @@ use Moose;
 use Carp ();
 
 sub wrap {
-    my ($next, $rp, $c) = @_;
+    my ($next, $c) = @_;
 
     local $SIG{__DIE__} = \&_die;
 
     eval {
-        $next->($rp, $c);
+        $next->($c);
     };
     if (my $err = $@) {
         $c->res->status( 500 );

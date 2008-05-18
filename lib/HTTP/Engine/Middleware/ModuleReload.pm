@@ -3,11 +3,11 @@ use Moose;
 use Module::Reload;
 
 sub wrap {
-    my ($next, $rp, $c) = @_;
+    my $next = shift;
 
     Module::Reload->check;
 
-    $next->($rp, $c);
+    $next->(@_);
 }
 
 1;

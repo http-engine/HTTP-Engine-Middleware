@@ -2,7 +2,7 @@ package HTTP::Engine::Middleware::ReverseProxy;
 use Moose;
 
 sub wrap {
-    my ($next, $rp, $c) = @_;
+    my ($next, $c) = @_;
 
     # in apache httpd.conf (RequestHeader set X-Forwarded-HTTPS %{HTTPS}s)
     $ENV{HTTPS} = $ENV{HTTP_X_FORWARDED_HTTPS} if $ENV{HTTP_X_FORWARDED_HTTPS};
@@ -41,7 +41,7 @@ sub wrap {
         $c->req->$attr( $c->req->$attr->canonical );
     }
 
-    $next->($rp, $c);
+    $next->($c);
 }
 
 1;
