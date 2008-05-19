@@ -25,7 +25,7 @@ features(
 
     'DoCoMoGUID' => [
         -default => 0,
-        recommends_hack('HTML::StickyQuery::DoCoMoGUID'),
+        recommends_hack('HTML::StickyQuery'),
     ],
 );
 
