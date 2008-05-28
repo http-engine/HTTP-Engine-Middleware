@@ -13,15 +13,15 @@ __END__
 
 =head1 NAME
 
-HTTP::Engine::Middleware -
+HTTP::Engine::Middleware - middlewares distributsion
 
-=head1 SYNOPSIS
+=head1 WARNING! WARNING!
 
-  use HTTP::Engine::Middleware;
+THIS MODULE IS IN ITS ALPHA QUALITY. THE API MAY CHANGE IN THE FUTURE
 
 =head1 DESCRIPTION
 
-HTTP::Engine::Middleware is
+HTTP::Engine::Middleware is official middlewares distribution of HTTP::Engine.
 
 =head1 TODO
 
@@ -44,6 +44,8 @@ hidek
 dann
 
 =head1 SEE ALSO
+
+L<HTTP::Engine>
 
 =head1 LICENSE
 
