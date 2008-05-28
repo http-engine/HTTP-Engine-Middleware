@@ -2,8 +2,10 @@ use strict;
 use warnings;
 use lib '.';
 use Test::Base;
+eval q{ use Data::Visitor::Encode };
+plan skip_all => "Data::Visitor::Encode is not installed" if $@;
 eval q{ use HTTP::Engine middlewares => ['+HTTP::Engine::Middleware::Encode'] };
-plan skip_all => "HTTP::Engine is not installed." if $@;
+plan skip_all => "HTTP::Engine is not installed: $@" if $@;
 
 plan tests => 3*blocks;
 
