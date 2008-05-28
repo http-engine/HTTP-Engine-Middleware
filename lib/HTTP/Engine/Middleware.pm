@@ -7,13 +7,13 @@ our $VERSION = '0.01';
 1;
 __END__
 
-=for stopwords Daisuke Maki dann hidek marcus nyarla
+=for stopwords Daisuke Maki dann hidek marcus nyarla API middlewares
 
 =encoding utf8
 
 =head1 NAME
 
-HTTP::Engine::Middleware - middlewares distributsion
+HTTP::Engine::Middleware - middlewares distribution
 
 =head1 WARNING! WARNING!
 
