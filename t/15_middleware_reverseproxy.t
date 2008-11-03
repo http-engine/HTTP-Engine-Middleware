@@ -3,6 +3,8 @@ use warnings;
 use Test::Base;
 use HTTP::Engine;
 use HTTP::Engine::Middleware::ReverseProxy;
+use HTTP::Request;
+use HTTP::Headers;
 
 filters { input => [qw/yaml/] };
 
@@ -10,13 +12,16 @@ plan tests => 17;
 
 run {
     my $block = shift;
-    local %ENV = %{ $block->input };
+    local %ENV = ();
     $ENV{REMOTE_ADDR}    = '127.0.0.1';
     $ENV{REQUEST_METHOD} = 'GET';
     $ENV{SERVER_PORT}    = 80;
     $ENV{HTTP_HOST}      = 'example.com';
     $ENV{QUERY_STRING}   = 'foo=bar';
 
+    my $headers = HTTP::Headers->new;
+    $headers->header(%{ $block->input });
+    # $headers->header(HOST => 'example.com:80');
     HTTP::Engine->new(
         interface => {
             module => 'Test',
@@ -37,56 +42,56 @@ run {
                 HTTP::Engine::Response->new(body  => 'OK');
             }),
         },
-    )->run(HTTP::Request->new(GET => 'http://example.com/?foo=bar'), env => \%ENV);
+    )->run(HTTP::Request->new(GET => 'http://example.com/?foo=bar', $headers),env => \%ENV);
 };
 
 __END__
 
 === with https
 --- input
-HTTP_X_FORWARDED_HTTPS: ON
+x-forwarded-https: on
 --- secure: 1
 --- base: https://example.com:80/
 --- uri:  https://example.com:80/?foo=bar
 
 === without https
 --- input
-HTTP_X_FORWARDED_HTTPS: OFF
+x-forwarded-https: off
 --- secure: 0
 --- base: http://example.com:80/
 --- uri:  http://example.com:80/?foo=bar
 
 ===
 --- input
-DUMMY: 1
+dummy: 1
 --- secure: 0
 --- base: http://example.com:80/
 --- uri: http://example.com:80/?foo=bar
 
 === https with HTTP_X_FORWARDED_PROTO
 --- input
-HTTP_X_FORWARDED_PROTO: https
+x-forwarded-proto: https
 --- secure: 1
 --- base: https://example.com:80/
 --- uri:  https://example.com:80/?foo=bar
 
 === with HTTP_X_FORWARDED_FOR
 --- input
-HTTP_X_FORWARDED_FOR: 192.168.3.2
+x-forwarded-for: 192.168.3.2
 --- address: 192.168.3.2
 --- base: http://example.com:80/
 --- uri:  http://example.com:80/?foo=bar
 
 === with HTTP_X_FORWARDED_HOST
 --- input
-HTTP_X_FORWARDED_HOST: 192.168.1.2:5235
+x-forwarded-host: 192.168.1.2:5235
 --- base: http://192.168.1.2:5235/
 --- uri:  http://192.168.1.2:5235/?foo=bar
 
 === with HTTP_X_FORWARDED_HOST and HTTP_X_FORWARDED_PORT
 --- input
-HTTP_X_FORWARDED_HOST: 192.168.1.5
-HTTP_X_FORWARDED_PORT: 1984
+x-forwarded-host: 192.168.1.5
+x-forwarded-port: 1984
 --- base: http://192.168.1.5:1984/
 --- uri:  http://192.168.1.5:1984/?foo=bar
 
