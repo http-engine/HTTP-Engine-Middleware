@@ -4,8 +4,11 @@ use lib '.';
 use Test::Base;
 eval q{ use Data::Visitor::Encode };
 plan skip_all => "Data::Visitor::Encode is not installed" if $@;
-eval q{ use HTTP::Engine middlewares => ['+HTTP::Engine::Middleware::Encode'] };
+eval q{ use HTTP::Request };
+plan skip_all => "HTTP::Request is not installed" if $@;
+eval q{ use HTTP::Engine };
 plan skip_all => "HTTP::Engine is not installed: $@" if $@;
+use HTTP::Engine::Middleware::Encode;
 
 plan tests => 3*blocks;
 
@@ -21,15 +24,17 @@ run {
 
     my $request = HTTP::Request->new( GET => $block->uri, ['Content-Type' => $block->content_type] );
 
+    my $do_test = sub {
+        my $req = shift;
+        ok Encode::is_utf8($req->params->{'nite'});
+        is_deeply $req->params, $block->params, $block->name;
+        HTTP::Engine::Response->new(body => 'OK!');
+    };
+
     my $response = HTTP::Engine->new(
         interface => {
             module => 'Test',
-            request_handler => sub {
-                my $c = shift;
-                ok Encode::is_utf8($c->req->params->{'nite'});
-                is_deeply $c->req->params, $block->params, $block->name;
-                $c->res->body('OK!');
-            },
+            request_handler => HTTP::Engine::Middleware::Encode->wrap($do_test),
         },
     )->run($request);
 

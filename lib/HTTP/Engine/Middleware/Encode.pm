@@ -4,19 +4,20 @@ use Moose;
 use Data::Visitor::Encode;
 
 sub wrap {
-    my ($next, $c) = @_;
+    my ($class, $next) = @_;
 
-    if (($c->req->headers->header('Content-Type')||'') =~ /charset=(.+);?$/) {
-        # decode parameters
-        my $encoding = $1;
-        my $dve = Data::Visitor::Encode->new;
-        $c->req->query_parameters($dve->decode($encoding, $c->req->query_parameters));
-        $c->req->body_parameters($dve->decode($encoding, $c->req->body_parameters));
-        $c->req->parameters($dve->decode($encoding, $c->req->parameters));
-    }
+    sub {
+        my $req = shift;
+        if (($req->headers->header('Content-Type')||'') =~ /charset=(.+);?$/) {
+            # decode parameters
+            my $encoding = $1;
+            for my $method (qw/params query_params body_params/) {
+                $req->$method( Data::Visitor::Encode->decode($encoding, $req->$method) );
+            }
 
-    $next->($c);
+            $next->($req);
+        }
+    };
 }
-
 
 1;
