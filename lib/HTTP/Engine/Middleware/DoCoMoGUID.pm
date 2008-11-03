@@ -4,27 +4,33 @@ use Scalar::Util qw/blessed/;
 use HTML::StickyQuery;
 
 sub wrap {
-    my ($next, $c) = @_;
+    my ($class, $next) = @_;
     
-    $next->($c);
+    sub {
+        my $req = shift;
 
-    if (   $c->res->status == 200
-        && $c->res->content_type =~ /html/
-        && not blessed $c->res->body
-        && $c->res->body )
-    {
-        my $body = $c->res->body;
-        $c->res->body(
-            do {
-                my $guid = HTML::StickyQuery->new(
-                    'abs' => 1,
-                );
-                $guid->sticky(
-                    scalarref => \$body,
-                    param     => { guid => 'ON' },
-                );
-            }
-        );
+        my $res = $next->($req);
+
+        if (   $res->status == 200
+            && $res->content_type =~ /html/
+            && not blessed $res->body
+            && $res->body )
+        {
+            my $body = $res->body;
+            $res->body(
+                sub {
+                    my $guid = HTML::StickyQuery->new(
+                        'abs' => 1,
+                    );
+                    $guid->sticky(
+                        scalarref => \$body,
+                        param     => { guid => 'ON' },
+                    );
+                }->()
+            );
+        }
+
+        $res;
     }
 }
 
