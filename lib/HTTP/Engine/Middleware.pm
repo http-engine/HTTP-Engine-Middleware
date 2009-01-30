@@ -16,6 +16,11 @@ has '_instance_of' => (
     default => sub { +{} },
 );
 
+has 'method_class' => (
+    is      => 'ro',
+    isa     => 'Str',
+);
+
 sub init_class {
     my $klass = shift;
     my $meta  = Mouse::Meta::Class->initialize($klass);
@@ -47,8 +52,9 @@ sub import {
         __MIDDLEWARE__($caller);
     };
 
-    *{"$caller\::before_handle"} = sub (&) { goto \&before_handle; };
-    *{"$caller\::after_handle"}  = sub (&) { goto \&after_handle; }
+    *{"$caller\::before_handle"}     = sub (&) { goto \&before_handle; };
+    *{"$caller\::after_handle"}      = sub (&) { goto \&after_handle; };
+    *{"$caller\::middleware_method"} = sub { goto \&middleware_method; };
 }
 
 sub __MIDDLEWARE__ {
@@ -66,6 +72,10 @@ sub before_handle {
 
 sub after_handle {
     Carp::croak "Can't call after_handle function outside Middleware's load phase";
+}
+
+sub middleware_method {
+    Carp::croak "Can't call middleware_method function outside Middleware's load phase";
 }
 
 sub install {
@@ -90,6 +100,10 @@ sub install {
             no warnings 'redefine';
             local *before_handle = sub { push @before_handles, @_ };
             local *after_handle  = sub { push @after_handles, @_ };
+            local *middleware_method = $self->method_class ? sub {
+                no strict 'refs';
+                *{$self->method_class . '::' . $_[0]} = $_[1];
+            } : sub {};
             local $@;
             Mouse::load_class($name);
             $@ and die $@;
