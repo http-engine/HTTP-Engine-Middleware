@@ -8,35 +8,36 @@ plan skip_all => "HTML::StickyQuery is not installed" if $@;
 eval q{ use HTTP::Engine };
 plan skip_all => "HTTP::Engine is not installed: $@" if $@;
 
-plan tests => 1*blocks;
+plan tests => 1 * blocks;
 
 use Encode;
 use URI;
 use HTTP::Request;
 use HTTP::Engine::Response;
-eval q{ use HTTP::Engine::Middleware::DoCoMoGUID };
+eval q{ use HTTP::Engine::Middleware };
 
-filters({
-    expected  => qw/ chomp /,
-});
+filters( { expected => qw/ chomp /, } );
 
 run {
     my $block = shift;
 
+    my $mw = HTTP::Engine::Middleware->new;
+    $mw->install( 'HTTP::Engine::Middleware::DoCoMoGUID', );
+
     my $code = sub {
         my $req = shift;
         HTTP::Engine::Response->new(
-          content_type  => 'text/html',
-          body          => $block->input,
+            content_type => 'text/html',
+            body         => $block->input,
         );
     };
 
     my $response = HTTP::Engine->new(
         interface => {
-            module => 'Test',
-            request_handler => HTTP::Engine::Middleware::DoCoMoGUID->wrap($code),
+            module          => 'Test',
+            request_handler => $mw->handler($code),
         },
-    )->run(HTTP::Request->new( GET => '/' ));
+    )->run( HTTP::Request->new( GET => '/' ) );
 
     is $response->content, $block->expected;
 };
