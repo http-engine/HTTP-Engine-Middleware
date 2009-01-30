@@ -35,7 +35,7 @@ before_handle {
     $self->err_info(undef);
     $self->stacktrace_required(0);
 
-    localize_elem '%SIG', '__DIE__' => sub { died($self, @_) } => SUB UP;
+    localize_elem '%SIG', '__DIE__' => sub { $c->diecatch(1); died($self, @_) } => SUB UP;
 
     $req;
 };

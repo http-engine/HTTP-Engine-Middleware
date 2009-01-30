@@ -21,6 +21,11 @@ has 'method_class' => (
     isa     => 'Str',
 );
 
+has 'diecatch' => (
+    is  => 'rw',
+    isa => 'Bool',
+);
+
 sub init_class {
     my $klass = shift;
     my $meta  = Mouse::Meta::Class->initialize($klass);
@@ -176,7 +181,15 @@ sub handler {
                 $req = $code->($self, $instance, $req);
             }
         }
-        my $res = eval { $handle->($req) };
+        my $res;
+        my $msg;
+        {
+            local $@;
+            $self->diecatch(0);
+            eval { $res = $handle->($req) };
+            $msg = $@ if !$self->diecatch && $@;
+        }
+        die $msg if $msg;
         for my $middleware (reverse @{ $self->middlewares }) {
             my $instance = $self->_instance_of->{$middleware};
             for my $code (reverse @{ $instance->after_handles }) {
