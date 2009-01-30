@@ -20,7 +20,8 @@ features(
 
     'DebugScreen' => [
         -default => 0,
-        recommends_hack('Carp::Always'),
+        recommends_hack('CGI::ExceptionManager'),
+        recommends_hack('Scope::Upper'),
     ],
 
     'DoCoMoGUID' => [

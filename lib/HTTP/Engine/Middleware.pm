@@ -176,7 +176,7 @@ sub handler {
                 $req = $code->($self, $instance, $req);
             }
         }
-        my $res = $handle->($req);
+        my $res = eval { $handle->($req) };
         for my $middleware (reverse @{ $self->middlewares }) {
             my $instance = $self->_instance_of->{$middleware};
             for my $code (reverse @{ $instance->after_handles }) {
