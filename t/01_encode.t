@@ -8,7 +8,8 @@ eval q{ use HTTP::Request };
 plan skip_all => "HTTP::Request is not installed" if $@;
 eval q{ use HTTP::Engine };
 plan skip_all => "HTTP::Engine is not installed: $@" if $@;
-use HTTP::Engine::Middleware::Encode;
+
+eval q{ use HTTP::Engine::Middleware::Encode };
 
 plan tests => 3*blocks;
 
