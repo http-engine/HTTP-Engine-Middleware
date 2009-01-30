@@ -55,6 +55,8 @@ sub import {
     *{"$caller\::before_handle"}     = sub (&) { goto \&before_handle; };
     *{"$caller\::after_handle"}      = sub (&) { goto \&after_handle; };
     *{"$caller\::middleware_method"} = sub { goto \&middleware_method; };
+    *{"$caller\::outer_middleware"}  = sub ($) { goto \&outer_middleware; };
+    *{"$caller\::inner_middleware"}  = sub ($)  { goto \&inner_middleware; };
 }
 
 sub __MIDDLEWARE__ {
@@ -78,6 +80,14 @@ sub middleware_method {
     Carp::croak "Can't call middleware_method function outside Middleware's load phase";
 }
 
+sub outer_middleware {
+    Carp::croak "Can't call outer_middleware function outside Middleware's load phase";
+}
+
+sub inner_middleware {
+    Carp::croak "Can't call inner_middleware function outside Middleware's load phase";
+}
+
 sub install {
     my($self, @middlewares) = @_;
 
@@ -93,27 +103,59 @@ sub install {
     }
 
     # load and create instance
+    my %dependend ;
     while (my($name, $config) = each %config) {
-        my @before_handles;
-        my @after_handles;
-        {
+        $dependend{$name} = { outer => [], inner => [] };
+
+        unless ($name->can('before_handles')) {
+            # init declear
+            my @before_handles;
+            my @after_handles;
+
+            no strict 'refs';
             no warnings 'redefine';
+
             local *before_handle = sub { push @before_handles, @_ };
             local *after_handle  = sub { push @after_handles, @_ };
             local *middleware_method = $self->method_class ? sub {
                 no strict 'refs';
                 *{$self->method_class . '::' . $_[0]} = $_[1];
             } : sub {};
+            local *outer_middleware = sub { push @{ $dependend{$name}->{outer} }, $_[0] };
+            local *inner_middleware = sub { push @{ $dependend{$name}->{inner} }, $_[0] };
             local $@;
             Mouse::load_class($name);
             $@ and Carp::croak $@;
+
+            *{"$name\::_before_handles"}    = sub () { @before_handles };
+            *{"$name\::_after_handles"}     = sub () { @after_handles };
+            *{"$name\::_outer_middlewares"} = sub () { @{ $dependend{$name}->{outer} } };
+            *{"$name\::_inner_middlewares"} = sub () { @{ $dependend{$name}->{inner} } };
+        } else {
+            $dependend{$name}->{outer} = [ $name->_outer_middlewares ];
+            $dependend{$name}->{inner} = [ $name->_inner_middlewares ];
         }
+
         my $instance = $name->new($config);
-        @{ $instance->before_handles } = @before_handles;
-        @{ $instance->after_handles }  = @after_handles;
+        @{ $instance->before_handles } = $name->_before_handles;
+        @{ $instance->after_handles }  = $name->_after_handles;
 
         $self->_instance_of->{$name} = $instance;
     }
+    # check dependency and sorting
+    my $i = 0;
+    my %sort = map { $_ => $i++ } @{ $self->middlewares };
+    while (my($from, $conf) = each %dependend) {
+        for my $to (@{ $conf->{outer} }) {
+            Carp::croak "'$from' need to '$to'" unless Mouse::is_class_loaded($to);
+            $sort{$to} = $sort{$from} - 1;
+        }
+        for my $to (@{ $conf->{inner} }) {
+            Carp::croak "'$from' need to '$to'" unless Mouse::is_class_loaded($to);
+            $sort{$to} = $sort{$from} + 1;
+        }
+    }
+    @{ $self->middlewares } = sort { $sort{$a} <=> $sort{$b} } keys %sort;
 }
 
 sub instance_of {
@@ -130,14 +172,14 @@ sub handler {
         for my $middleware (@{ $self->middlewares }) {
             my $instance = $self->_instance_of->{$middleware};
             for my $code (@{ $instance->before_handles }) {
-                $req = $code->($instance, $req);
+                $req = $code->($self, $instance, $req);
             }
         }
         my $res = $handle->($req);
-        for my $middleware (@{ $self->middlewares }) {
+        for my $middleware (reverse @{ $self->middlewares }) {
             my $instance = $self->_instance_of->{$middleware};
             for my $code (reverse @{ $instance->after_handles }) {
-                $res = $code->($instance, $req, $res);
+                $res = $code->($self, $instance, $req, $res);
             }
         }
 

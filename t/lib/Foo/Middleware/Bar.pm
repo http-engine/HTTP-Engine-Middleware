@@ -6,13 +6,13 @@ has 'key' => (
 );
 
 before_handle {
-    my($self, $req) = @_;
+    my($c, $self, $req) = @_;
     $req->header( 'X-Key' => $self->key );
     $req;
 };
 
 after_handle {
-    my($self, $req, $res) = @_;
+    my($c, $self, $req, $res) = @_;
     $res->body( $res->body . ', key=' . $self->key );
     $res;
 };
