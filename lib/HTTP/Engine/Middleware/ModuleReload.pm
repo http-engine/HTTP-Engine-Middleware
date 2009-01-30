@@ -3,11 +3,14 @@ use Moose;
 use Module::Reload;
 
 sub wrap {
-    my $next = shift;
+    my ($class, $next) = shift;
 
-    Module::Reload->check;
+    sub {
+        my $req = shift;
+        Module::Reload->check;
 
-    $next->(@_);
+        $next->($req);
+    };
 }
 
 1;

@@ -2,46 +2,53 @@ package HTTP::Engine::Middleware::ReverseProxy;
 use Moose;
 
 sub wrap {
-    my ($next, $c) = @_;
+    my ($class, $next) = @_;
 
-    # in apache httpd.conf (RequestHeader set X-Forwarded-HTTPS %{HTTPS}s)
-    $ENV{HTTPS} = $ENV{HTTP_X_FORWARDED_HTTPS} if $ENV{HTTP_X_FORWARDED_HTTPS};
-    $ENV{HTTPS} = 'ON'                         if $ENV{HTTP_X_FORWARDED_PROTO}; # Pound
-    $c->req->secure(1) if $ENV{HTTPS} && uc $ENV{HTTPS} eq 'ON';
+    sub {
+        my $req = shift;
 
-    # If we are running as a backend server, the user will always appear
-    # as 127.0.0.1. Select the most recent upstream IP (last in the list)
-    if ($ENV{HTTP_X_FORWARDED_FOR}) {
-        my ($ip, ) = $ENV{HTTP_X_FORWARDED_FOR} =~ /([^,\s]+)$/;
-        $c->req->address($ip);
-    }
+        my $env = $req->_connection->{env} || {};
+        # in apache httpd.conf (RequestHeader set X-Forwarded-HTTPS %{HTTPS}s)
+        $env->{HTTPS} = $req->headers->{'x-forwarded-https'} if $req->headers->{'x-forwarded-https'};
+        $env->{HTTPS} = 'ON'                         if $req->headers->{'x-forwarded-proto'}; # Pound
+        $req->secure(1) if $env->{HTTPS} && uc $env->{HTTPS} eq 'ON';
 
-    if ($ENV{HTTP_X_FORWARDED_HOST}) {
-        my $host = $ENV{HTTP_X_FORWARDED_HOST};
-        if ($host =~ /^(.+):(\d+)$/ ) {
-            $host = $1;
-            $ENV{SERVER_PORT} = $2;
-        } elsif ($ENV{HTTP_X_FORWARDED_PORT}) {
-            # in apache httpd.conf (RequestHeader set X-Forwarded-Port 8443)
-            $ENV{SERVER_PORT} = $ENV{HTTP_X_FORWARDED_PORT};
+        # If we are running as a backend server, the user will always appear
+        # as 127.0.0.1. Select the most recent upstream IP (last in the list)
+        if ($req->headers->{'x-forwarded-for'}) {
+            my ($ip, ) = $req->headers->{'x-forwarded-for'} =~ /([^,\s]+)$/;
+            $req->address($ip);
         }
-        $ENV{HTTP_HOST} = $host;
 
-        $c->req->headers->header( 'Host' => $ENV{HTTP_HOST} );
-    }
+        if ($req->headers->{'x-forwarded-host'}) {
+            my $host = $req->headers->{'x-forwarded-host'};
+            if ($host =~ /^(.+):(\d+)$/ ) {
+                $host = $1;
+                $env->{SERVER_PORT} = $2;
+            } elsif ($req->headers->{'x-forwarded-port'}) {
+                # in apache httpd.conf (RequestHeader set X-Forwarded-Port 8443)
+                $env->{SERVER_PORT} = $req->headers->{'x-forwarded-port'};
+            }
+            $env->{HTTP_HOST} = $host;
 
-    for my $attr (qw/uri base/) {
-        my $scheme = $c->req->secure ? 'https' : 'http';
-        my $host = $ENV{HTTP_HOST} || $ENV{SERVER_NAME};
-        my $port = $ENV{SERVER_PORT} || ( $c->req->secure ? 443 : 80 );
+            $req->headers->header( 'Host' => $env->{HTTP_HOST} );
+        }
+        $req->_connection->{env} = $env;
 
-        $c->req->$attr->scheme($scheme);
-        $c->req->$attr->host($host);
-        $c->req->$attr->port($port);
-        $c->req->$attr( $c->req->$attr->canonical );
-    }
+        for my $attr (qw/uri base/) {
+            my $scheme = $req->secure ? 'https' : 'http';
+            my $host = $env->{HTTP_HOST} || $env->{SERVER_NAME};
+            my $port = $env->{SERVER_PORT} || ( $req->secure ? 443 : 80 );
+            # my $path_info = $env->{PATH_INFO} || '/';
 
-    $next->($c);
+            $req->$attr->scheme($scheme);
+            $req->$attr->host($host);
+            $req->$attr->port($port);
+            # $req->$attr->path($path_info);
+            # $req->$attr( $req->$attr->canonical );
+        }
+        $next->($req);
+    };
 }
 
 1;
