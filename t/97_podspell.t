@@ -28,3 +28,7 @@ ikebe
 kan
 kazeburo
 TODO
+Kitano
+Takatoshi
+walf443
+
