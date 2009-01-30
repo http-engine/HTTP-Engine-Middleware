@@ -2,7 +2,7 @@ use strict;
 use warnings;
 use Test::Base;
 use HTTP::Engine;
-use HTTP::Engine::Middleware::ReverseProxy;
+use HTTP::Engine::Middleware;
 use HTTP::Request;
 use HTTP::Headers;
 
@@ -19,30 +19,41 @@ run {
     $ENV{HTTP_HOST}      = 'example.com';
     $ENV{QUERY_STRING}   = 'foo=bar';
 
+    my $mw = HTTP::Engine::Middleware->new;
+    $mw->install( 'HTTP::Engine::Middleware::ReverseProxy', );
+
     my $headers = HTTP::Headers->new;
-    $headers->header(%{ $block->input });
+    $headers->header( %{ $block->input } );
+
     # $headers->header(HOST => 'example.com:80');
     HTTP::Engine->new(
         interface => {
-            module => 'Test',
-            request_handler => HTTP::Engine::Middleware::ReverseProxy->wrap(sub {
-                my $req = shift;
+            module          => 'Test',
+            request_handler => $mw->handler(
+                sub {
+                    my $req = shift;
 
-                for my $attr ( qw/secure address/ ) {
-                    if ( $block->$attr ) {
-                      is($req->$attr, $block->$attr, $block->name . " of $attr");
+                    for my $attr (qw/secure address/) {
+                        if ( $block->$attr ) {
+                            is( $req->$attr, $block->$attr,
+                                $block->name . " of $attr" );
+                        }
                     }
-                }
-                for my $url ( qw/uri base / ) {
-                  if ( $block->$url ) {
-                    is($req->$url->as_string, $block->$url, $block->name . " of $url");
-                  }
-                }
+                    for my $url (qw/uri base /) {
+                        if ( $block->$url ) {
+                            is( $req->$url->as_string, $block->$url,
+                                $block->name . " of $url" );
+                        }
+                    }
 
-                HTTP::Engine::Response->new(body  => 'OK');
-            }),
+                    HTTP::Engine::Response->new( body => 'OK' );
+                }
+            ),
         },
-    )->run(HTTP::Request->new(GET => 'http://example.com/?foo=bar', $headers),env => \%ENV);
+        )->run(
+        HTTP::Request->new( GET => 'http://example.com/?foo=bar', $headers ),
+        env => \%ENV
+        );
 };
 
 __END__

@@ -1,23 +1,21 @@
 package HTTP::Engine::Middleware::Encode;
-use Moose;
-
+use HTTP::Engine::Middleware;
 use Data::Visitor::Encode;
 
-sub wrap {
-    my ($class, $next) = @_;
+before_handle {
+    my ( $c, $self, $req ) = @_;
 
-    sub {
-        my $req = shift;
-        if (($req->headers->header('Content-Type')||'') =~ /charset=(.+);?$/) {
-            # decode parameters
-            my $encoding = $1;
-            for my $method (qw/params query_params body_params/) {
-                $req->$method( Data::Visitor::Encode->decode($encoding, $req->$method) );
-            }
+    if (( $req->headers->header('Content-Type') || '' ) =~ /charset=(.+);?$/ )
+    {
 
-            $next->($req);
+        # decode parameters
+        my $encoding = $1;
+        for my $method (qw/params query_params body_params/) {
+            $req->$method(
+                Data::Visitor::Encode->decode( $encoding, $req->$method ) );
         }
-    };
-}
+    }
+    $req;
+};
 
-1;
+__MIDDLEWARE__

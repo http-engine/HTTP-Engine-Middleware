@@ -1,30 +1,78 @@
 package HTTP::Engine::Middleware::DebugScreen;
-use Moose;
-use Carp ();
+use HTTP::Engine::Middleware;
 
-sub wrap {
-    my ($next, $c) = @_;
+use HTTP::Engine::Response;
 
-    local $SIG{__DIE__} = \&_die;
+use Scope::Upper qw( localize_elem :words );
 
-    eval {
-        $next->($c);
-    };
-    if (my $err = $@) {
-        $c->res->status( 500 );
-        $c->res->content_type( 'text/plain' );
-        $c->res->body( $err );
+has 'powerd_by' => (
+    is      => 'rw',
+    default => __PACKAGE__,
+);
+
+has 'renderer' => (
+    is => 'rw',
+);
+
+has 'err_info' => (
+    is => 'rw',
+);
+
+has 'response' => (
+    is => 'rw',
+);
+
+has 'stacktrace_required' => (
+    is  => 'rw',
+    isa => 'Bool',
+);
+
+
+before_handle {
+    my($c, $self, $req) = @_;
+
+    $self->response(undef);
+    $self->err_info(undef);
+    $self->stacktrace_required(0);
+
+    localize_elem '%SIG', '__DIE__' => sub { died($self, @_) } => SUB UP;
+
+    $req;
+};
+
+after_handle {
+    my($c, $self, $req, $res) = @_;
+
+    if ($self->err_info) {
+        $res = HTTP::Engine::Response->new;
+        $res->code(500);
+        $res->body(
+            $self->err_info->as_html(
+                powered_by => $self->powerd_by,
+                ($self->renderer ? (renderer => $self->renderer) : ())
+            )
+        );
     }
+
+    $res;
+};
+
+sub detach { die bless [@_], 'CGI::ExceptionManager::Exception' }
+
+sub died {
+    my($self, $msg) = @_;
+
+    if (ref $msg eq 'CGI::ExceptionManager::Exception') {
+        $self->response($msg->[0]);
+        $self->err_info(undef);
+    } else {
+        unless ($self->stacktrace_required) {
+            require CGI::ExceptionManager::StackTrace;
+            $self->stacktrace_required(1);
+        }
+        $self->err_info( CGI::ExceptionManager::StackTrace->new($msg) );
+    }
+    die $msg;
 }
 
-# copied from Carp::Always. thanks ferreira++
-sub _die {
-    if ( $_[-1] =~ /\n$/s ) {
-        my $arg = pop @_;
-        $arg =~ s/ at .*? line .*?\n$//s;
-        push @_, $arg;
-    }
-    die &Carp::longmess;
-}
-
-1;
+__MIDDLEWARE__

@@ -1,19 +1,15 @@
 package HTTP::Engine::Middleware::ModuleReload;
-use Moose;
+use HTTP::Engine::Middleware;
 use Module::Reload;
 
-sub wrap {
-    my ($class, $next) = shift;
+before_handle {
+    my ( $c, $self, $req ) = @_;
+    Module::Reload->check;
+    $req;
+};
 
-    sub {
-        my $req = shift;
-        Module::Reload->check;
+__MIDDLEWARE__
 
-        $next->($req);
-    };
-}
-
-1;
 __END__
 
 =head1 NAME

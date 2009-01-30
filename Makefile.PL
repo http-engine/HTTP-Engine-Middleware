@@ -10,7 +10,7 @@ use inc::Module::Install;
 name 'HTTP-Engine-Middleware';
 all_from 'lib/HTTP/Engine/Middleware.pm';
 
-requires 'HTTP::Engine' => '0.0.8';
+requires 'HTTP::Engine' => '0.1.1';
 
 features(
     'ModuleReload' => [
@@ -20,12 +20,28 @@ features(
 
     'DebugScreen' => [
         -default => 0,
-        recommends_hack('Carp::Always'),
+        recommends_hack('CGI::ExceptionManager'),
+        recommends_hack('Scope::Upper'),
     ],
 
     'DoCoMoGUID' => [
         -default => 0,
         recommends_hack('HTML::StickyQuery'),
+    ],
+
+    'Encode' => [
+        -default => 0,
+        recommends_hack('Data::Visitor::Encode'),
+    ],
+
+    'MobileAttribute' => [
+        -default => 0,
+        recommends_hack('HTTP::MobileAttribute'),
+    ],
+
+    'MobileAgent' => [
+        -default => 0,
+        recommends_hack('HTTP::MobileAgent'),
     ],
 );
 

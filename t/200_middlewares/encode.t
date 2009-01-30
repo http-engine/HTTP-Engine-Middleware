@@ -9,33 +9,37 @@ plan skip_all => "HTTP::Request is not installed" if $@;
 eval q{ use HTTP::Engine };
 plan skip_all => "HTTP::Engine is not installed: $@" if $@;
 
-eval q{ use HTTP::Engine::Middleware::Encode };
+eval q{ use HTTP::Engine::Middleware };
 
-plan tests => 3*blocks;
+plan tests => 3 * blocks;
 
 use Encode;
 use URI;
 
-filters {
-    params => [qw/eval/],
-};
+filters { params => [qw/eval/], };
 
 run {
     my $block = shift;
 
-    my $request = HTTP::Request->new( GET => $block->uri, ['Content-Type' => $block->content_type] );
+    my $mw = HTTP::Engine::Middleware->new;
+    $mw->install( 'HTTP::Engine::Middleware::Encode', );
+
+    my $request = HTTP::Request->new(
+        GET => $block->uri,
+        [ 'Content-Type' => $block->content_type ]
+    );
 
     my $do_test = sub {
         my $req = shift;
-        ok Encode::is_utf8($req->params->{'nite'});
+        ok Encode::is_utf8( $req->params->{'nite'} );
         is_deeply $req->params, $block->params, $block->name;
-        HTTP::Engine::Response->new(body => 'OK!');
+        HTTP::Engine::Response->new( body => 'OK!' );
     };
 
     my $response = HTTP::Engine->new(
         interface => {
-            module => 'Test',
-            request_handler => HTTP::Engine::Middleware::Encode->wrap($do_test),
+            module          => 'Test',
+            request_handler => $mw->handler($do_test),
         },
     )->run($request);
 
