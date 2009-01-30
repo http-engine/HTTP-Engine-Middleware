@@ -119,6 +119,7 @@ sub install {
             local *after_handle  = sub { push @after_handles, @_ };
             local *middleware_method = $self->method_class ? sub {
                 no strict 'refs';
+                *{"$name\::$_[0]"}                    = $_[1];
                 *{$self->method_class . '::' . $_[0]} = $_[1];
             } : sub {};
             local *outer_middleware = sub { push @{ $dependend{$name}->{outer} }, $_[0] };
