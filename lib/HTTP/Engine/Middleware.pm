@@ -225,7 +225,7 @@ marcus
 
 hidek
 
-dann
+Takatoshi Kitano E<lt>techmemo@gmail.com<gt>
 
 =head1 SEE ALSO
 
