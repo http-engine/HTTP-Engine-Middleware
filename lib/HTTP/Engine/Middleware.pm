@@ -106,7 +106,7 @@ sub install {
             } : sub {};
             local $@;
             Mouse::load_class($name);
-            $@ and die $@;
+            $@ and Carp::croak $@;
         }
         my $instance = $name->new($config);
         @{ $instance->before_handles } = @before_handles;
