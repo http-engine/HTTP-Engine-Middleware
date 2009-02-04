@@ -216,6 +216,17 @@ HTTP::Engine::Middleware - middlewares distribution
 
 THIS MODULE IS IN ITS ALPHA QUALITY. THE API MAY CHANGE IN THE FUTURE
 
+=head1 SYNOPSIS
+
+    my $mw = HTTP::Engine::Middleware->new({ method_class => 'HTTP::Engine::Request' });
+    $mw->install(qw(HTTP::Engine::Middleware::DebugScreen));
+    HTTP::Engine->new(
+        interface => {
+            module => 'YourFavoriteInterfaceHere',
+            request_handler => $mw->handler( \&handler ),
+        }
+    )->run();
+
 =head1 DESCRIPTION
 
 HTTP::Engine::Middleware is official middlewares distribution of HTTP::Engine.
