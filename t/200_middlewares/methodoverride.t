@@ -19,7 +19,7 @@ run {
     my $block = shift;
 
     my $mw = HTTP::Engine::Middleware->new;
-    $mw->install( 'HTTP::Engine::Middleware::OverloadPost', );
+    $mw->install( 'HTTP::Engine::Middleware::MethodOverride', );
     my $request = HTTP::Request::Common::POST( $block->uri, $block->post_params );
     my $do_test = sub {
         my $req = shift;
@@ -43,7 +43,4 @@ __END__
 --- uri: http://localhost/
 --- post_params : [ '_method' => 'DELETE' ]
 
-=== x-tunneled-method
---- uri: http://localhost/
---- post_params : [ 'x-tunneled-method' => 'DELETE' ]
 
