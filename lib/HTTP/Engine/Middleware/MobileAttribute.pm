@@ -3,7 +3,7 @@ use HTTP::Engine::Middleware;
 
 middleware_method 'mobile_attribute' => sub {
     my $self = shift;
-    $self->{mobile_attribute} = HTTP::MobileAttribute->new( $self->headers );
+    $self->{mobile_attribute} ||= HTTP::MobileAttribute->new( $self->headers );
 };
 
 __MIDDLEWARE__
