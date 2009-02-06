@@ -123,9 +123,14 @@ sub install {
             local *before_handle = sub { push @before_handles, @_ };
             local *after_handle  = sub { push @after_handles, @_ };
             local *middleware_method = $self->method_class ? sub {
+                my($method, $code) = @_;
+                my $method_class = $self->method_class;
+                if ($method =~ /^(.+)\:\:([^\:]+)$/) {
+                    ($method_class, $method) = ($1, $2);
+                }
                 no strict 'refs';
-                *{"$name\::$_[0]"}                    = $_[1];
-                *{$self->method_class . '::' . $_[0]} = $_[1];
+                *{"$name\::$method"}         = $code;
+                *{"$method_class\::$method"} = $code;
             } : sub {};
             local *outer_middleware = sub { push @{ $dependend{$name}->{outer} }, $_[0] };
             local *inner_middleware = sub { push @{ $dependend{$name}->{inner} }, $_[0] };

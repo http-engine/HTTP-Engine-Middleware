@@ -1,7 +1,7 @@
 use strict;
 use warnings;
 use lib 't/lib';
-use Test::More tests => 2;
+use Test::More tests => 3;
 
 use HTTP::Engine;
 use HTTP::Engine::Response;
@@ -24,6 +24,7 @@ is $res->content, 'ok', 'end of request';
 sub handler {
     my $req = shift;
     is MethodInject->foo, 'foo', 'inject method';
+    is(HTTP::Engine::Request->darts, 'darts', 'inject method in other class');
     HTTP::Engine::Response->new( body => 'ok' );
 }
 
