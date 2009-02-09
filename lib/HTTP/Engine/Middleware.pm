@@ -180,23 +180,30 @@ sub handler {
     sub {
         my $req = shift;
 
+        my $res;
+        my @run_middlewares;
+    LOOP:
         for my $middleware (@{ $self->middlewares }) {
             my $instance = $self->_instance_of->{$middleware};
             for my $code (@{ $instance->before_handles }) {
-                $req = $code->($self, $instance, $req);
+                my $ret = $code->($self, $instance, $req);
+                if ($ret->isa('HTTP::Engine::Response')) {
+                    $res = $ret;
+                    last LOOP;
+                }
+                $req = $ret;
             }
+            push @run_middlewares, $instance;
         }
-        my $res;
         my $msg;
-        {
+        unless ($res) {
             local $@;
             $self->diecatch(0);
             eval { $res = $handle->($req) };
             $msg = $@ if !$self->diecatch && $@;
         }
         die $msg if $msg;
-        for my $middleware (reverse @{ $self->middlewares }) {
-            my $instance = $self->_instance_of->{$middleware};
+        for my $instance (reverse @run_middlewares) {
             for my $code (reverse @{ $instance->after_handles }) {
                 $res = $code->($self, $instance, $req, $res);
             }
