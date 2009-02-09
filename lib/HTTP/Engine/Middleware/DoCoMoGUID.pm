@@ -29,3 +29,10 @@ after_handle {
 
 __MIDDLEWARE__
 
+__END__
+
+=head1 NAME
+
+HTTP::Engine::Middleware::DebugScreen - documentation is TODO
+
+=cut

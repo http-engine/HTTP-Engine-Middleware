@@ -33,3 +33,9 @@ sub decode_params {
 __MIDDLEWARE__
 
 __END__
+
+=head1 NAME
+
+HTTP::Engine::Middleware::Unicode - documentation is TODO
+
+=cut

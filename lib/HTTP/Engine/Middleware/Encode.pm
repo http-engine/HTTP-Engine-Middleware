@@ -19,3 +19,11 @@ before_handle {
 };
 
 __MIDDLEWARE__
+
+__END__
+
+=head1 NAME
+
+HTTP::Engine::Middleware::Encode - documentation is TODO
+
+=cut

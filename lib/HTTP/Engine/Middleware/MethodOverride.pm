@@ -45,3 +45,11 @@ sub overload_request_method {
 }
 
 __MIDDLEWARE__
+
+__END__
+
+=head1 NAME
+
+HTTP::Engine::Middleware::MethodOverride - documentation is TODO
+
+=cut

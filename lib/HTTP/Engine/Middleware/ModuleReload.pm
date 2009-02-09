@@ -18,7 +18,7 @@ HTTP::Engine::MiddleWare::ModuleReload - module reloader for HTTP::Engine
 
 =head1 SYNOPSIS
 
-    - module: ModuleReload
+TBA
 
 =head1 AUTHOR
 

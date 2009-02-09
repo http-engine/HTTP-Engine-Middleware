@@ -230,12 +230,28 @@ THIS MODULE IS IN ITS ALPHA QUALITY. THE API MAY CHANGE IN THE FUTURE
 
 =head1 SYNOPSIS
 
-    my $mw = HTTP::Engine::Middleware->new({ method_class => 'HTTP::Engine::Request' });
+simply
+
+    my $mw = HTTP::Engine::Middleware->new;
     $mw->install(qw(HTTP::Engine::Middleware::DebugScreen));
     HTTP::Engine->new(
         interface => {
             module => 'YourFavoriteInterfaceHere',
             request_handler => $mw->handler( \&handler ),
+        }
+    )->run();
+
+method injection middleware
+
+    my $mw = HTTP::Engine::Middleware->new({ method_class => 'HTTP::Engine::Request' });
+    $mw->install(qw(HTTP::Engine::Middleware::MobileAttribute));
+    HTTP::Engine->new(
+        interface => {
+            module => 'YourFavoriteInterfaceHere',
+            request_handler => $mw->handler(sub {
+                my $req = shift;
+                HTTP::Engine::Response->new( body => $req->mobile_attribute );
+            })
         }
     )->run();
 
