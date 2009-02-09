@@ -236,9 +236,18 @@ THIS MODULE IS IN ITS ALPHA QUALITY. THE API MAY CHANGE IN THE FUTURE
 
 HTTP::Engine::Middleware is official middlewares distribution of HTTP::Engine.
 
-=head1 TODO
+=head1 WISHLIST
 
-no plan :-)
+Session
+
+Authentication
+
+OpenID
+
+Static
+
+
+and more ideas
 
 =head1 AUTHOR
 
@@ -247,6 +256,8 @@ Kazuhiro Osawa E<lt>ko@yappo.ne.jpE<gt>
 Daisuke Maki
 
 Tokuhiro Matsuno E<lt>tokuhirom@gmail.comE<gt>
+
+dann
 
 nyarla
 
@@ -261,6 +272,13 @@ Takatoshi Kitano E<lt>techmemo@gmail.com<gt>
 =head1 SEE ALSO
 
 L<HTTP::Engine>
+
+=head1 REPOSITORY
+
+  svn co http://svn.coderepos.org/share/lang/perl/HTTP-Engine-Middleware/trunk HTTP-Engine-Middleware
+
+HTTP::Engine::Middleware's Subversion repository is hosted at L<http://coderepos.org/share/>.
+patches and collaborators are welcome.
 
 =head1 LICENSE
 
