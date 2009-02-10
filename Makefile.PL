@@ -46,6 +46,7 @@ features(
 );
 
 tests 't/*.t t/*/*.t t/*/*/*.t';
+author_tests 'xt';
 build_requires 'Test::More';
 build_requires 'YAML';
 use_test_base;
