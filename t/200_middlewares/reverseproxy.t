@@ -8,7 +8,7 @@ use HTTP::Headers;
 
 filters { input => [qw/yaml/] };
 
-plan tests => 17;
+plan tests => 25;
 
 run {
     my $block = shift;
@@ -18,6 +18,7 @@ run {
     $ENV{SERVER_PORT}    = 80;
     $ENV{HTTP_HOST}      = 'example.com';
     $ENV{QUERY_STRING}   = 'foo=bar';
+    $ENV{HTTPS}          = delete $block->input->{https} if $block->input->{https};
 
     my $mw = HTTP::Engine::Middleware->new;
     $mw->install( 'HTTP::Engine::Middleware::ReverseProxy', );
@@ -69,15 +70,15 @@ x-forwarded-https: on
 --- input
 x-forwarded-https: off
 --- secure: 0
---- base: http://example.com:80/
---- uri:  http://example.com:80/?foo=bar
+--- base: http://example.com/
+--- uri:  http://example.com/?foo=bar
 
 ===
 --- input
 dummy: 1
 --- secure: 0
---- base: http://example.com:80/
---- uri: http://example.com:80/?foo=bar
+--- base: http://example.com/
+--- uri: http://example.com/?foo=bar
 
 === https with HTTP_X_FORWARDED_PROTO
 --- input
@@ -90,14 +91,40 @@ x-forwarded-proto: https
 --- input
 x-forwarded-for: 192.168.3.2
 --- address: 192.168.3.2
---- base: http://example.com:80/
---- uri:  http://example.com:80/?foo=bar
+--- base: http://example.com/
+--- uri:  http://example.com/?foo=bar
 
 === with HTTP_X_FORWARDED_HOST
 --- input
 x-forwarded-host: 192.168.1.2:5235
 --- base: http://192.168.1.2:5235/
 --- uri:  http://192.168.1.2:5235/?foo=bar
+
+=== default port with HTTP_X_FORWARDED_HOST
+--- input
+x-forwarded-host: 192.168.1.2
+--- base: http://192.168.1.2/
+--- uri:  http://192.168.1.2/?foo=bar
+
+=== default https port with HTTP_X_FORWARDED_HOST
+--- input
+x-forwarded-https: on
+x-forwarded-host: 192.168.1.2
+--- base: https://192.168.1.2/
+--- uri:  https://192.168.1.2/?foo=bar
+
+=== default port with HOST
+--- input
+host: 192.168.1.2
+--- base: http://192.168.1.2/
+--- uri:  http://192.168.1.2/?foo=bar
+
+=== default https port with HOST
+--- input
+host: 192.168.1.2
+https: ON
+--- base: https://192.168.1.2/
+--- uri:  https://192.168.1.2/?foo=bar
 
 === with HTTP_X_FORWARDED_HOST and HTTP_X_FORWARDED_PORT
 --- input
