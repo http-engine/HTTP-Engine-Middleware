@@ -39,9 +39,14 @@ features(
         recommends_hack('HTTP::MobileAttribute'),
     ],
 
-    'MobileAgent' => [
+    'Unicode' => [
         -default => 0,
-        recommends_hack('HTTP::MobileAgent'),
+        recommends_hack('Data::Visitor::Encode'),
+    ],
+
+    'DebugRequest' => [
+        -default => 0,
+        recommends_hack('Text::SimpleTable'),
     ],
 );
 

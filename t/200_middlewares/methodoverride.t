@@ -3,7 +3,7 @@ use warnings;
 use lib '.';
 use Test::Base;
 eval q{ use HTTP::Request::Common };
-plan skip_all => "HTTP::Request is not installed" if $@;
+plan skip_all => "HTTP::Request::Common is not installed" if $@;
 eval q{ use HTTP::Engine };
 plan skip_all => "HTTP::Engine is not installed: $@" if $@;
 

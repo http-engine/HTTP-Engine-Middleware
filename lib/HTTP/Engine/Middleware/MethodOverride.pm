@@ -23,11 +23,11 @@ has 'HTTP_METHOD_OVERRIDE_HEADER' => (
 
 before_handle {
     my ( $c, $self, $req ) = @_;
-    $self->overload_request_method($req);
+    $self->override_request_method($req);
     $req;
 };
 
-sub overload_request_method {
+sub override_request_method {
     my ( $self, $req ) = @_;
 
     my $method = $req->method;
