@@ -42,6 +42,8 @@ before_handle {
             $env->{HTTP_HOST}   = $1;
             $env->{SERVER_PORT} = $default_port;
         }
+    } else {
+        return $req;
     }
     $req->_connection->{env} = $env;
 
