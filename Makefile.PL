@@ -10,7 +10,7 @@ use inc::Module::Install;
 name 'HTTP-Engine-Middleware';
 all_from 'lib/HTTP/Engine/Middleware.pm';
 
-requires 'HTTP::Engine' => '0.1.1';
+requires 'HTTP::Engine' => '0.1.2';
 
 features(
     'ModuleReload' => [
