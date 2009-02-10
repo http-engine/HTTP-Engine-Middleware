@@ -83,4 +83,19 @@ __END__
 
 HTTP::Engine::Middleware::DebugScreen - documentation is TODO
 
+=head1 SYNOPSIS
+
+    my $mw = HTTP::Engine::Middleware->new;
+    $mw->install(qw/ HTTP::Engine::Middleware::DebugScreen /);
+    HTTP::Engine->new(
+        interface => {
+            module => 'YourFavoriteInterfaceHere',
+            request_handler => $mw->handler( \&handler ),
+        }
+    )->run();
+
+=head1 SEE ALSO
+
+L<Scope::Upper>, L<CGI::ExceptionManager::StackTrace>
+
 =cut

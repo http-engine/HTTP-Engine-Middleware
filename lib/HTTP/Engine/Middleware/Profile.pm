@@ -52,4 +52,20 @@ __END__
 
 HTTP::Engine::Middleware::Profile - documentation is TODO
 
+=head1 SYNOPSIS
+
+    my $mw = HTTP::Engine::Middleware->new;
+    $mw->install( 'HTTP::Engine::Middleware::Profile' => {
+        logger => sub {
+            my($level, $msg) = @_;
+            warn $mgs;
+        },
+    });
+    HTTP::Engine->new(
+        interface => {
+            module => 'YourFavoriteInterfaceHere',
+            request_handler => $mw->handler( \&handler ),
+        }
+    )->run();
+
 =cut

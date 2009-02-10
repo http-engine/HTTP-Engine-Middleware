@@ -1,6 +1,7 @@
 package HTTP::Engine::Middleware::Unicode;
 use HTTP::Engine::Middleware;
 use Data::Visitor::Encode;
+use Encode ();
 
 before_handle {
     my ( $c, $self, $req ) = @_;
@@ -37,5 +38,20 @@ __END__
 =head1 NAME
 
 HTTP::Engine::Middleware::Unicode - documentation is TODO
+
+=head1 SYNOPSIS
+
+    my $mw = HTTP::Engine::Middleware->new;
+    $mw->install(qw/ HTTP::Engine::Middleware::Unicode /);
+    HTTP::Engine->new(
+        interface => {
+            module => 'YourFavoriteInterfaceHere',
+            request_handler => $mw->handler( \&handler ),
+        }
+    )->run();
+
+=head1 SEE ALSO
+
+L<Data::Visitor::Encode>
 
 =cut

@@ -35,4 +35,8 @@ __END__
 
 HTTP::Engine::Middleware::DebugScreen - documentation is TODO
 
+=head1 SEE ALSO
+
+L<HTML::StickyQuery>
+
 =cut

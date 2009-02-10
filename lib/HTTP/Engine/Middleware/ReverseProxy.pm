@@ -73,4 +73,15 @@ __END__
 
 HTTP::Engine::Middleware::ReverseProxy - documentation is TODO
 
+=head1 SYNOPSIS
+
+    my $mw = HTTP::Engine::Middleware->new;
+    $mw->install(qw/ HTTP::Engine::Middleware::ReverseProxy /);
+    HTTP::Engine->new(
+        interface => {
+            module => 'YourFavoriteInterfaceHere',
+            request_handler => $mw->handler( \&handler ),
+        }
+    )->run();
+
 =cut

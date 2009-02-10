@@ -18,7 +18,14 @@ HTTP::Engine::MiddleWare::ModuleReload - module reloader for HTTP::Engine
 
 =head1 SYNOPSIS
 
-TBA
+    my $mw = HTTP::Engine::Middleware->new;
+    $mw->install(qw/ HTTP::Engine::Middleware::ModuleReload /);
+    HTTP::Engine->new(
+        interface => {
+            module => 'YourFavoriteInterfaceHere',
+            request_handler => $mw->handler( \&handler ),
+        }
+    )->run();
 
 =head1 AUTHOR
 
@@ -27,3 +34,5 @@ Tokuhiro Matsuno
 =head1 SEE ALSO
 
 L<Module::Reload>
+
+=cut

@@ -233,7 +233,7 @@ THIS MODULE IS IN ITS ALPHA QUALITY. THE API MAY CHANGE IN THE FUTURE
 simply
 
     my $mw = HTTP::Engine::Middleware->new;
-    $mw->install(qw(HTTP::Engine::Middleware::DebugScreen));
+    $mw->install(qw/ HTTP::Engine::Middleware::DebugScreen HTTP::Engine::Middleware::ReverseProxy /);
     HTTP::Engine->new(
         interface => {
             module => 'YourFavoriteInterfaceHere',
@@ -244,7 +244,7 @@ simply
 method injection middleware
 
     my $mw = HTTP::Engine::Middleware->new({ method_class => 'HTTP::Engine::Request' });
-    $mw->install(qw(HTTP::Engine::Middleware::MobileAttribute));
+    $mw->install(qw/ HTTP::Engine::Middleware::DebugScreen HTTP::Engine::Middleware::ReverseProxy /);
     HTTP::Engine->new(
         interface => {
             module => 'YourFavoriteInterfaceHere',
