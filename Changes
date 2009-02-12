@@ -1,4 +1,11 @@
 Revision history for Perl extension HTTP::Engine::Middleware
 
+0.02    2009-02-12T23:08:46+09:00
+        - add DebugRequest, FillInForm, Static
+        - Unicode merged to Encode
+        - Core: fixed to exception handling bug
+        - ReverseProxy: fixed host/port detection bug
+        - fixed to profile runtime test's bug, use Scalar::Util::looks_like_number
+
 0.01    2009-02-10T15:58:56+09:00
         - original version

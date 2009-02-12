@@ -10,9 +10,12 @@ use inc::Module::Install;
 name 'HTTP-Engine-Middleware';
 all_from 'lib/HTTP/Engine/Middleware.pm';
 
-requires 'HTTP::Engine' => '0.1.2';
+requires 'HTTP::Engine' => '0.1.3';
 
 features(
+
+# For Developer's
+
     'ModuleReload' => [
         -default => 0,
         recommends_hack('Module::Reload'),
@@ -24,40 +27,43 @@ features(
         recommends_hack('Scope::Upper'),
     ],
 
+    'DebugRequest' => [
+        -default => 0,
+        recommends_hack('Text::SimpleTable'),
+    ],
+
+# static file maneger ( developer ? )
+
     'Static' => [
         -default => 0,
         recommends_hack('MIME::Types'),
         recommends_hack('Path::Class'),
     ],
 
+# fill in form
+
     'FillInForm' => [
         -default => 0,
         recommends_hack('HTML::FillInForm' => '2.00'),
     ],
 
-    'DoCoMoGUID' => [
-        -default => 0,
-        recommends_hack('HTML::StickyQuery'),
-    ],
+# encoding
 
     'Encode' => [
         -default => 0,
         recommends_hack('Data::Visitor::Encode'),
     ],
 
+# For Japanese Mobile
+
     'MobileAttribute' => [
         -default => 0,
         recommends_hack('HTTP::MobileAttribute'),
     ],
 
-    'Unicode' => [
+    'DoCoMoGUID' => [
         -default => 0,
-        recommends_hack('Data::Visitor::Encode'),
-    ],
-
-    'DebugRequest' => [
-        -default => 0,
-        recommends_hack('Text::SimpleTable'),
+        recommends_hack('HTML::StickyQuery'),
     ],
 );
 

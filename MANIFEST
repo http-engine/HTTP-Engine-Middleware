@@ -18,9 +18,11 @@ inc/Test/Builder/Module.pm
 inc/Test/More.pm
 inc/YAML.pm
 lib/HTTP/Engine/Middleware.pm
+lib/HTTP/Engine/Middleware/DebugRequest.pm
 lib/HTTP/Engine/Middleware/DebugScreen.pm
 lib/HTTP/Engine/Middleware/DoCoMoGUID.pm
 lib/HTTP/Engine/Middleware/Encode.pm
+lib/HTTP/Engine/Middleware/FillInForm.pm
 lib/HTTP/Engine/Middleware/MethodOverride.pm
 lib/HTTP/Engine/Middleware/MobileAttribute.pm
 lib/HTTP/Engine/Middleware/ModuleReload.pm
@@ -29,7 +31,7 @@ lib/HTTP/Engine/Middleware/Profile/Role.pm
 lib/HTTP/Engine/Middleware/Profile/Runtime.pm
 lib/HTTP/Engine/Middleware/ReverseProxy.pm
 lib/HTTP/Engine/Middleware/Role.pm
-lib/HTTP/Engine/Middleware/Unicode.pm
+lib/HTTP/Engine/Middleware/Static.pm
 Makefile.PL
 MANIFEST			This list of files
 META.yml
@@ -41,15 +43,18 @@ t/100_core/method_injection.t
 t/100_core/skip_response.t
 t/100_core/use.t
 t/100_core/wrap.t
+t/200_middlewares/debugrequest.t
 t/200_middlewares/debugscreen.t
 t/200_middlewares/docomo_guid.t
 t/200_middlewares/encode.t
+t/200_middlewares/fillin_form.t
 t/200_middlewares/methodoverride.t
 t/200_middlewares/mobile_attribute.t
 t/200_middlewares/profile-runtime.t
 t/200_middlewares/profile.t
 t/200_middlewares/reverseproxy.t
-t/200_middlewares/unicode.t
+t/200_middlewares/static.t
+t/htdocs/index.html
 t/lib/Foo/Middleware/Bar.pm
 t/lib/Foo/Middleware/Baz.pm
 t/lib/Foo/Middleware/Inner.pm

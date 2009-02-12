@@ -35,3 +35,6 @@ OpenID
 WISHLIST
 middleware
 TBA
+cp
+JIS
+utf
