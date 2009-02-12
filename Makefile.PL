@@ -24,6 +24,12 @@ features(
         recommends_hack('Scope::Upper'),
     ],
 
+    'Static' => [
+        -default => 0,
+        recommends_hack('MIME::Types'),
+        recommends_hack('Path::Class'),
+    ],
+
     'FillInForm' => [
         -default => 0,
         recommends_hack('HTML::FillInForm' => '2.00'),
