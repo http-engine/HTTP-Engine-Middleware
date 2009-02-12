@@ -14,7 +14,7 @@ __END__
 
 =head1 NAME
 
-HTTP::Engine::MiddleWare::ModuleReload - module reloader for HTTP::Engine
+HTTP::Engine::Middleware::ModuleReload - module reloader for HTTP::Engine
 
 =head1 SYNOPSIS
 
