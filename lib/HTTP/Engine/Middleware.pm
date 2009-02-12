@@ -134,9 +134,8 @@ sub install {
             } : sub {};
             local *outer_middleware = sub { push @{ $dependend{$name}->{outer} }, $_[0] };
             local *inner_middleware = sub { push @{ $dependend{$name}->{inner} }, $_[0] };
-            local $@;
+
             Mouse::load_class($name);
-            $@ and Carp::croak $@;
 
             *{"$name\::_before_handles"}    = sub () { @before_handles };
             *{"$name\::_after_handles"}     = sub () { @after_handles };
@@ -197,8 +196,8 @@ sub handler {
         }
         my $msg;
         unless ($res) {
-            local $@;
             $self->diecatch(0);
+            local $@;
             eval { $res = $handle->($req) };
             $msg = $@ if !$self->diecatch && $@;
         }
