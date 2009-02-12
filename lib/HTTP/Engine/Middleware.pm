@@ -268,9 +268,6 @@ Authentication
 
 OpenID
 
-Static
-
-
 and more ideas
 
 =head1 AUTHOR
