@@ -24,6 +24,11 @@ features(
         recommends_hack('Scope::Upper'),
     ],
 
+    'FillInForm' => [
+        -default => 0,
+        recommends_hack('HTML::FillInForm' => '2.00'),
+    ],
+
     'DoCoMoGUID' => [
         -default => 0,
         recommends_hack('HTML::StickyQuery'),
