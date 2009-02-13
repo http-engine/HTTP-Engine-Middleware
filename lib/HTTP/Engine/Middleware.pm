@@ -279,8 +279,6 @@ Daisuke Maki
 
 Tokuhiro Matsuno E<lt>tokuhirom@gmail.comE<gt>
 
-dann
-
 nyarla
 
 marcus
