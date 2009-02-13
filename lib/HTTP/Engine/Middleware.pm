@@ -21,6 +21,11 @@ has 'method_class' => (
     isa     => 'Str',
 );
 
+has 'logger' => (
+    is      => 'ro',
+    isa     => 'CodeRef',
+);
+
 has 'diecatch' => (
     is  => 'rw',
     isa => 'Bool',
@@ -97,14 +102,24 @@ sub install {
     my($self, @middlewares) = @_;
 
     my %config;
-    for my $middleware (@middlewares) {
-        if (ref($middleware) eq 'HASH') {
-            $config{$self->middlewares->[-1]} = $middleware;
-            next;
+    for my $stuff (@middlewares) {
+        if (ref($stuff) eq 'HASH') {
+            my $mw_name = $self->middlewares->[-1]; # configuration for last one item
+            $config{$mw_name} = +{
+                %{ $config{$mw_name} },
+                %{ $stuff            },
+            };
+        } else {
+            my $mw_name = $stuff;
+            push @{ $self->middlewares }, $mw_name;
+            $config{$mw_name} = do {
+                if ($self->logger) {
+                    +{ logger => $self->logger };
+                } else {
+                    +{ }
+                }
+            };
         }
-
-        $config{$middleware} = {};
-        push @{ $self->middlewares }, $middleware;
     }
 
     # load and create instance
