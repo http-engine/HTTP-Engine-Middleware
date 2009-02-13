@@ -5,7 +5,7 @@ use Test::More;
 eval q{ use Time::HiRes };
 plan skip_all => "Time::HiRes is not installed: $@" if $@;
 
-plan tests => 6;
+plan tests => 5;
 
 use HTTP::Engine;
 use HTTP::Engine::Middleware;
@@ -17,9 +17,8 @@ my $mw = HTTP::Engine::Middleware->new;
 $mw->install( 'HTTP::Engine::Middleware::Profile',{
     logger  => sub {
         my $re = qr/Request handling execution time: (.+) secs/;
-        ::is  $_[0], 'debug', 'log level';
-        ::like $_[1], $re, 'log msg';
-        $_[1] =~ $re;
+        ::like $_[0], $re, 'log msg';
+        $_[0] =~ $re;
         ::ok looks_like_number($1), 'time is number';
     },
     config  => +{

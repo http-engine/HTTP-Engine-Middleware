@@ -1,6 +1,8 @@
 package HTTP::Engine::Middleware::Profile;
 use HTTP::Engine::Middleware;
 
+with 'HTTP::Engine::Middleware::Role::Logger';
+
 use Carp ();
 
 has profiler_class => (

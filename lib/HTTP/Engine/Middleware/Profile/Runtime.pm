@@ -6,10 +6,6 @@ use Time::HiRes qw(time);
 
 has 'start_time'  => ( is => 'rw' );
 has 'end_time'    => ( is => 'rw' );
-has 'log_level'   => (
-    is      => 'rw',
-    default => 'info',
-);
 has 'send_header' => (
     is      => 'rw',
     default => 0,
@@ -33,7 +29,7 @@ sub report {
 
     my $elapsed = $self->end_time - $self->start_time;
     my $message = "Request handling execution time: $elapsed secs\n";
-    $profile->log( $self->log_level => $message );
+    $profile->log( $message );
 
     return unless $self->send_header;
     $res->header( $self->header_name => $elapsed );

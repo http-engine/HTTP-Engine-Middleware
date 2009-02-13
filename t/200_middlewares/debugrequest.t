@@ -21,7 +21,7 @@ GET_PARAMETERS: {
     $mw->install(
         'HTTP::Engine::Middleware::DebugRequest',
         {   logger => sub {
-                my ( $level, $message ) = @_;
+                my ( $message ) = @_;
                 ::like $message, qr/getparam/, 'match get param'
                     unless $message =~ m/Path/;
                 }
@@ -49,7 +49,7 @@ POST_PARAMETERS: {
     $mw->install(
         'HTTP::Engine::Middleware::DebugRequest',
         {   logger => sub {
-                my ( $level, $message ) = @_;
+                my ( $message ) = @_;
                 ::like $message, qr/postparam/, 'match post param'
                     unless $message =~ m/Path/;
             },
@@ -76,7 +76,7 @@ NO_PARAMETERS: {
     $mw->install(
         'HTTP::Engine::Middleware::DebugRequest',
         {   logger => sub {
-                my ( $level, $message ) = @_;
+                my ( $message ) = @_;
                 ::like $message, qr/GET/, 'GET request'
                     unless $message =~ m/Parameter/;
             },

@@ -2,6 +2,8 @@ package HTTP::Engine::Middleware::DebugRequest;
 use HTTP::Engine::Middleware;
 use Text::SimpleTable;
 
+with 'HTTP::Engine::Middleware::Role::Logger';
+
 before_handle {
     my ( $c, $self, $req ) = @_;
     $self->report_request_info($req);
@@ -26,7 +28,7 @@ sub report_params {
                 ref $value eq 'ARRAY' ? ( join ', ', @$value ) : $value );
         }
         my $message = "Parameters: \n" . $t->draw;
-        $self->log( 'info', $message );
+        $self->log( $message );
     }
 }
 
@@ -39,7 +41,7 @@ sub report_request_basic_info {
     );
     $t->row( $req->path, $req->method, $req->base );
     my $message = "Matching Info:\n" . $t->draw;
-    $self->log( 'info', $message );
+    $self->log( $message );
 }
 
 __MIDDLEWARE__

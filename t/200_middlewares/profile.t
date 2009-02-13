@@ -20,7 +20,7 @@ use HTTP::Request;
         ::isa_ok $c, 'HTTP::Engine::Middleware';
         ::isa_ok $profile, 'HTTP::Engine::Middleware::Profile';
         ::isa_ok $req, 'HTTP::Engine::Request';
-        $profile->log( hoge => 'log:'.$i++);
+        $profile->log( 'log:'.$i++);
     }
 
     sub end {
@@ -30,7 +30,7 @@ use HTTP::Request;
         ::isa_ok $profile, 'HTTP::Engine::Middleware::Profile';
         ::isa_ok $req, 'HTTP::Engine::Request';
         ::isa_ok $res, 'HTTP::Engine::Response';
-        $profile->log( hoge => 'log:'.$i++);
+        $profile->log( 'log:'.$i++);
     }
 
     sub report {
@@ -40,7 +40,7 @@ use HTTP::Request;
         ::isa_ok $profile, 'HTTP::Engine::Middleware::Profile';
         ::isa_ok $req, 'HTTP::Engine::Request';
         ::isa_ok $res, 'HTTP::Engine::Response';
-        $profile->log( hoge => 'log:'.$i++);
+        $profile->log( 'log:'.$i++);
     }
 }
 
@@ -49,7 +49,7 @@ use HTTP::Request;
     my $mw = HTTP::Engine::Middleware->new;
     $mw->install( 'HTTP::Engine::Middleware::Profile',{
         profiler_class => '+TestProfile',
-        logger         => sub { ::is $_[1], 'log:'.$i++ },
+        logger         => sub { ::is $_[0], 'log:'.$i++ },
     });
     my $res = HTTP::Engine->new(
         interface => {
