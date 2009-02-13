@@ -35,4 +35,4 @@ sub report {
     $res->header( $self->header_name => $elapsed );
 }
 
-1;
+__PACKAGE__->meta->make_immutable;1;
