@@ -4,6 +4,7 @@ use HTTP::Engine::Response;
 
 use MIME::Types;
 use Path::Class;
+use Cwd;
 
 has 'path' => (
     is      => 'ro',
