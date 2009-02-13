@@ -7,7 +7,6 @@ use Path::Class;
 use Cwd;
 use MooseX::Types::Path::Class;
 use File::Spec::Unix;
-use MooseX::Types;
 
 has 'regexp' => (
     is       => 'ro',

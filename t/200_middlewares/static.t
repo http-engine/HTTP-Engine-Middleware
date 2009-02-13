@@ -7,6 +7,7 @@ eval q{ use MIME::Types };
 plan skip_all => "MIME::Types is not installed" if $@;
 eval q{ use Path::Class };
 plan skip_all => "Path::Class is not installed" if $@;
+plan skip_all => "MooseX::Types::Path::Class is not installed" unless eval "use MooseX::Types::Path::Class;1;";
 
 plan tests => 8 * blocks;
 
