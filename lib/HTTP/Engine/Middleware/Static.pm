@@ -60,6 +60,10 @@ before_handle {
         $file_path = Path::Class::File->new( $base_path . shift(@path), @path );
     }
 
+    # check directory traversal
+    my $realpath = Cwd::realpath($file_path->absolute->stringify);
+    return HTTP::Engine::Response->new( status => 403, body => 'forbidden') unless dir($base_path)->absolute->subsumes($realpath);
+
     return HTTP::Engine::Response->new( status => '404', body => 'not found' ) unless -e $file_path;
 
     my $content_type = 'text/plain';

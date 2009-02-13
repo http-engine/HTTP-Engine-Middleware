@@ -92,3 +92,9 @@ __END__
 --- content_type: text/html
 --- body: index page
 --- code: 200
+
+=== directory traversal
+--- uri: http://localhost/htdocs/../../Makefile.PL
+--- content_type: text/html
+--- body: forbidden
+--- code: 403
