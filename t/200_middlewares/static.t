@@ -26,7 +26,6 @@ run {
                 '/static/' => Path::Class::Dir->new(qw/ t htdocs /),
                 '/dist/'   => Path::Class::Dir->new(qw/ . /),
                 '/lib/'    => Path::Class::Dir->new(qw/ . lib HTTP Engine /)->stringify,
-                '/t'       => Path::Class::Dir->new(qw/ . t 100 /),
                 '/htdocs/' => Path::Class::Dir->new(qw/ . t htdocs /),
             ],
         },
@@ -84,18 +83,6 @@ __END__
 
 === lib not found
 --- uri: http://localhost/lib/notfound.html
---- content_type: text/html
---- body: not found
---- code: 404
-
-=== t/100 3
---- uri: http://localhost/t_core/wrap.t
---- content_type: application/x-troff
---- body: \$req\-\>header\(\'X-Key\'\)
---- code: 200
-
-=== t/100 not found
---- uri: http://localhost/t_base.txt
 --- content_type: text/html
 --- body: not found
 --- code: 404
