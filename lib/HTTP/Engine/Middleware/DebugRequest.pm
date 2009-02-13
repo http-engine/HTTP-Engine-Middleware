@@ -50,15 +50,14 @@ __END__
 
 =head1 NAME
 
-HTTP::Engine::Middleware::DebugRequest - documentation is TODO
+HTTP::Engine::Middleware::DebugRequest - dump request
 
 =head1 SYNOPSIS
 
     my $mw = HTTP::Engine::Middleware->new;
     $mw->install( 'HTTP::Engine::Middleware::DebugRequest' => {
         logger => sub {
-            my($level, $msg) = @_;
-            warn $mgs;
+            warn @_;
         },
     });
     HTTP::Engine->new(
@@ -68,4 +67,15 @@ HTTP::Engine::Middleware::DebugRequest - documentation is TODO
         }
     )->run();
 
-=cut
+=head1 DESCRIPTION
+
+This middleware prints request info like Catalyst.
+
+=head1 AUTHOR
+
+dann
+
+=head1 SEE ALSO
+
+L<HTTP::Engine::Middleware>
+

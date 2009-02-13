@@ -33,7 +33,18 @@ __END__
 
 =head1 NAME
 
-HTTP::Engine::Middleware::DebugScreen - documentation is TODO
+HTTP::Engine::Middleware::DoCoMoGUID - append guid=ON on each anchor tag
+
+=head1 SYNOPSIS
+
+This module appends ?guid=ON on each anchor tag.
+This feature is needed by Japanese mobile web site developers.
+
+=head1 AUTHORS
+
+tokuhirom
+
+yappo
 
 =head1 SEE ALSO
 

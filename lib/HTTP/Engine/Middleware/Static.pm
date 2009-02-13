@@ -115,4 +115,13 @@ HTTP::Engine::Middleware::Profile - handler for static files
     # $ GET http//localhost/blb.txt
     # to get the /baz/b.txt 
 
+=head1 DESCRIPTION
+
+On development site, you would feed some static contents from Interface::ServerSimple, or other stuff.
+This module helps that.
+
+=head1 AUTHORS
+
+Kazuhiro Osawa
+
 =cut

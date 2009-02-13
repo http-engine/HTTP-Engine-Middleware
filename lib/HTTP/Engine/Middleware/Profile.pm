@@ -52,15 +52,14 @@ __END__
 
 =head1 NAME
 
-HTTP::Engine::Middleware::Profile - documentation is TODO
+HTTP::Engine::Middleware::Profile - stopwatch for request processing time
 
 =head1 SYNOPSIS
 
     my $mw = HTTP::Engine::Middleware->new;
     $mw->install( 'HTTP::Engine::Middleware::Profile' => {
         logger => sub {
-            my($level, $msg) = @_;
-            warn $mgs;
+            warn @_;
         },
     });
     HTTP::Engine->new(
@@ -69,5 +68,13 @@ HTTP::Engine::Middleware::Profile - documentation is TODO
             request_handler => $mw->handler( \&handler ),
         }
     )->run();
+
+=head1 DESCRIPTION
+
+This module profile request processing time.
+
+=head1 AUTHORS
+
+dann
 
 =cut

@@ -27,6 +27,10 @@ HTTP::Engine::Middleware::ModuleReload - module reloader for HTTP::Engine
         }
     )->run();
 
+=head1 DESCRIPTION
+
+This module reloads modules at each request.
+
 =head1 AUTHOR
 
 Tokuhiro Matsuno

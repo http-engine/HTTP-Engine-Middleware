@@ -124,6 +124,12 @@ in code = detect by Content-Type header (default encoding is utf8), out code = u
         }
     )->run();
 
+=head1 AUTHORS
+
+precuredaisuki
+
+yappo
+
 =head1 SEE ALSO
 
 L<Data::Visitor::Encode>
