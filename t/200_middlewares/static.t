@@ -41,12 +41,8 @@ run {
 
     my @config = (
         'HTTP::Engine::Middleware::Static' => {
-            path => [
-                '/static/' => Path::Class::Dir->new(qw/ t htdocs /),
-                '/dist/'   => Path::Class::Dir->new(qw/ . /),
-                '/lib/'    => Path::Class::Dir->new(qw/ . lib HTTP Engine /)->stringify,
-                '/htdocs/' => Path::Class::Dir->new(qw/ . t htdocs /),
-            ],
+            regexp  => qr{^(/css/.+|/robots\.txt)$},
+            docroot => Path::Class::Dir->new('t', 'htdocs'),
         },
     );
 
@@ -70,44 +66,27 @@ __END__
 --- body: dynamic
 --- code: 200
 
-=== dist
---- uri: http://localhost/dist/Makefile.PL
---- content_type: application/x-perl
---- body: use inc::Module::Install
+=== robots
+--- uri: http://localhost/robots.txt
+--- content_type: text/plain
+--- body: robots.txt here
 --- code: 200
 
-=== dist not found
---- uri: http://localhost/dist/notfound.html
+=== css
+--- uri: http://localhost/css/mobile.css
+--- content_type: text/css
+--- body: .mobile { display: none; }
+--- code: 200
+
+=== not found
+--- uri: http://localhost/css/unknown.css
 --- content_type: text/html
 --- body: not found
 --- code: 404
-
-=== lib
---- uri: http://localhost/lib/Middleware.pm
---- content_type: application/x-pagemaker
---- body: package HTTP::Engine::Middleware;
---- code: 200
-
-=== lib 2
---- uri: http://localhost/lib/Middleware/Static.pm
---- content_type: application/x-pagemaker
---- body: package HTTP::Engine::Middleware::Static;
---- code: 200
-
-=== lib not found
---- uri: http://localhost/lib/notfound.html
---- content_type: text/html
---- body: not found
---- code: 404
-
-=== index
---- uri: http://localhost/htdocs/
---- content_type: text/html
---- body: index page
---- code: 200
 
 === directory traversal
---- uri: http://localhost/htdocs/../../Makefile.PL
+--- uri: http://localhost/css/../../Makefile.PL
 --- content_type: text/html
 --- body: forbidden
 --- code: 403
+

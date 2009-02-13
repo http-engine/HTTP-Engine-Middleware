@@ -5,81 +5,63 @@ use HTTP::Engine::Response;
 use MIME::Types;
 use Path::Class;
 use Cwd;
+use MooseX::Types::Path::Class;
+use File::Spec::Unix;
+use MooseX::Types;
 
-has 'path' => (
-    is      => 'ro',
-    isa     => 'HashRef',
-    default => sub { +{} },
+has 'regexp' => (
+    is       => 'ro',
+    isa      => 'Regexp',
+    required => 1,
 );
 
-has 'pattern' => (
-    is         => 'ro',
-    isa        => 'Str|Undef',
+has 'docroot' => (
+    is       => 'ro',
+    isa      => 'Path::Class::Dir',
+    coerce   => 1,
+    required => 1,
 );
 
 has 'mime_types' => (
     is  => 'ro',
     isa => 'MIME::Types',
+    lazy => 1,
+    default => sub {
+        my $mime_types = MIME::Types->new(only_complete => 1);
+        $mime_types->create_type_index;
+        $mime_types;
+    },
 );
-
-sub BUILDARGS {
-    my($class, $args) = @_;
-
-    my @path;
-    my %path;
-    my $build = {};
-    my @path_conf = @{ $args->{path} || [] };
-    while (my($path, $conf) = splice @path_conf, 0, 2) {
-        push @path, $path;
-        $path{$path} = $conf;
-    }
-    $build->{pattern} = join '|', @path;
-    $build->{path}    = \%path;
-
-    my $mime_types = MIME::Types->new(only_complete => 1);
-    $mime_types->create_type_index;
-    $build->{mime_types} = $mime_types;
-
-    $build;
-}
 
 before_handle {
     my ( $c, $self, $req ) = @_;
 
-    my $re   = $self->pattern;
+    my $re   = $self->regexp;
     my $uri_path = $req->uri->path;
-    return $req unless $uri_path && $re && $uri_path =~ /^($re)(.*)$/;
+    return $req unless $uri_path && $uri_path =~ /^(?:$re)$/;
 
-    my($key, $file)  = ($1, $2);
-    my $conf = $self->path->{$key} or return $req;
-    my $base_path = $conf;
-
-    $file .= 'index.html' if $uri_path =~ m!/$!;
-    my @path = split '/', $file;
-    my $file_path;
-    if ($key =~ m!/$!) {
-        $file_path = dir($base_path)->file(@path);
-    } else {
-        $file_path = Path::Class::File->new( $base_path . shift(@path), @path );
-    }
+    my $docroot = dir($self->docroot)->absolute;
+    my $file = $docroot->file(
+        File::Spec::Unix->splitpath($uri_path)
+    );
 
     # check directory traversal
-    my $realpath = Cwd::realpath($file_path->absolute->stringify);
-    return HTTP::Engine::Response->new( status => 403, body => 'forbidden') unless dir($base_path)->absolute->subsumes($realpath);
+    my $realpath = Cwd::realpath($file->absolute->stringify);
+    return HTTP::Engine::Response->new( status => 403, body => 'forbidden') unless $docroot->subsumes($realpath);
 
-    return HTTP::Engine::Response->new( status => '404', body => 'not found' ) unless -e $file_path;
+    return HTTP::Engine::Response->new( status => '404', body => 'not found' ) unless -e $file;
 
     my $content_type = 'text/plain';
-    if ($file_path =~ /.*\.(\S{1,})$/xms ) {
+    if ($file =~ /.*\.(\S{1,})$/xms ) {
         $content_type = $self->mime_types->mimeTypeOf($1);
     }
 
-    my $fh = $file_path->openr;
-    die "Unable to open $file_path for reading : $!" unless $fh;
+    my $fh = $file->openr;
+    die "Unable to open $file for reading : $!" unless $fh;
     binmode $fh;
 
     my $res = HTTP::Engine::Response->new( body => $fh, content_type => $content_type );
-    my $stat = $file_path->stat;
+    my $stat = $file->stat;
     $res->header( 'Content-Length' => $stat->size );
     $res->header( 'Last-Modified'  => $stat->mtime );
     $res;
@@ -98,10 +80,8 @@ HTTP::Engine::Middleware::Profile - handler for static files
 
     my $mw = HTTP::Engine::Middleware->new;
     $mw->install( 'HTTP::Engine::Middleware::Static' => {
-        path => [
-            '/static/' => '/foo/bar',
-            '/bl'      => '/baz',
-        ],
+        regexp  => qr{^/(robots.txt|css/.+)$},
+        docroot => '/path/to/htdocs/',
     });
     HTTP::Engine->new(
         interface => {
@@ -110,17 +90,12 @@ HTTP::Engine::Middleware::Profile - handler for static files
         }
     )->run();
 
-    # $ GET http//localhost/static/baz.txt
-    # to get the /foo/bar/baz.txt 
+    # $ GET http//localhost/css/foo.css
+    # to get the /path/to/htdocs/css/foo.css
 
-    # $ GET http//localhost/static/bzz.txt
-    # to get the /foo/bar/bzz.txt 
+    # $ GET http//localhost/robots.txt
+    # to get the /path/to/htdocs/robots.txt
 
-    # $ GET http//localhost/bla.txt
-    # to get the /baz/a.txt 
-
-    # $ GET http//localhost/blb.txt
-    # to get the /baz/b.txt 
 
 =head1 DESCRIPTION
 
