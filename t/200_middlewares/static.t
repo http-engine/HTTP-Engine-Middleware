@@ -8,7 +8,7 @@ plan skip_all => "MIME::Types is not installed" if $@;
 eval q{ use Path::Class };
 plan skip_all => "Path::Class is not installed" if $@;
 
-plan tests => 3 * blocks;
+plan tests => 4 * blocks;
 
 use HTTP::Engine;
 use HTTP::Engine::Middleware;
@@ -19,8 +19,7 @@ use Path::Class;
 run {
     my $block = shift;
 
-    my $mw = HTTP::Engine::Middleware->new;
-    $mw->install(
+    my @config = (
         'HTTP::Engine::Middleware::Static' => {
             path => [
                 '/static/' => Path::Class::Dir->new(qw/ t htdocs /),
@@ -30,6 +29,9 @@ run {
             ],
         },
     );
+
+    my $mw = HTTP::Engine::Middleware->new;
+    $mw->install(@config);
 
     my $request = HTTP::Request->new(
         GET => $block->uri
@@ -46,6 +48,9 @@ run {
     is $response->content_type, $block->content_type, 'content type';
     my $body = $block->body;
     like $response->content, qr/$body/, 'body';
+
+    my $mw2 = HTTP::Engine::Middleware->new;
+    ok $mw2->install(@config), 'create multi instance';
 };
 
 

@@ -27,18 +27,19 @@ sub BUILDARGS {
 
     my @path;
     my %path;
+    my $build = {};
     while (my($path, $conf) = splice @{ $args->{path} || [] }, 0, 2) {
         push @path, $path;
         $path{$path} = $conf;
     }
-    $args->{pattern} = join '|', @path;
-    $args->{path}    = \%path;
+    $build->{pattern} = join '|', @path;
+    $build->{path}    = \%path;
 
     my $mime_types = MIME::Types->new(only_complete => 1);
     $mime_types->create_type_index;
-    $args->{mime_types} = $mime_types;
+    $build->{mime_types} = $mime_types;
 
-    $args;
+    $build;
 }
 
 before_handle {
