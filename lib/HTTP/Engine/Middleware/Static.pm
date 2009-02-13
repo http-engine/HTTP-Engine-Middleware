@@ -55,7 +55,7 @@ before_handle {
     my @path = split '/', $file;
     my $file_path;
     if ($key =~ m!/$!) {
-        $file_path = $base_path->file(@path);
+        $file_path = dir($base_path)->file(@path);
     } else {
         $file_path = Path::Class::File->new( $base_path . shift(@path), @path );
     }

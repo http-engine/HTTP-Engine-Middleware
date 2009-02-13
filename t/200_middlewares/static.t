@@ -25,7 +25,7 @@ run {
             path => [
                 '/static/' => Path::Class::Dir->new(qw/ t htdocs /),
                 '/dist/'   => Path::Class::Dir->new(qw/ . /),
-                '/lib/'    => Path::Class::Dir->new(qw/ . lib HTTP Engine /),
+                '/lib/'    => Path::Class::Dir->new(qw/ . lib HTTP Engine /)->stringify,
                 '/t'       => Path::Class::Dir->new(qw/ . t 100 /),
                 '/htdocs/' => Path::Class::Dir->new(qw/ . t htdocs /),
             ],
