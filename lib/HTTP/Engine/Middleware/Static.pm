@@ -28,7 +28,8 @@ sub BUILDARGS {
     my @path;
     my %path;
     my $build = {};
-    while (my($path, $conf) = splice @{ $args->{path} || [] }, 0, 2) {
+    my @path_conf = @{ $args->{path} || [] };
+    while (my($path, $conf) = splice @path_conf, 0, 2) {
         push @path, $path;
         $path{$path} = $conf;
     }
