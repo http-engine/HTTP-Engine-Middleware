@@ -5,9 +5,8 @@ plan tests => 9;
 
 eval q{ use HTTP::Request::Common };
 plan skip_all => "HTTP::Request::Common is not installed" if $@;
-eval q{ use HTTP::Engine };
-plan skip_all => "HTTP::Engine is not installed: $@" if $@;
-eval q{ use HTTP::Engine::Middleware };
+eval q{ use Text::SimpleTable };
+plan skip_all => "Text::SimpleTable is not installed: $@" if $@;
 
 use HTTP::Engine;
 use HTTP::Engine::Middleware;
