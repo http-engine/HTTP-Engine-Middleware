@@ -9,7 +9,7 @@ eval q{ use Path::Class };
 plan skip_all => "Path::Class is not installed" if $@;
 plan skip_all => "MooseX::Types::Path::Class is not installed" unless eval "use MooseX::Types::Path::Class;1;";
 
-plan tests => 8 * blocks;
+plan tests => 12 * blocks;
 
 use HTTP::Engine;
 use HTTP::Engine::Middleware;
@@ -56,6 +56,18 @@ run {
     ok $mw2->install(@config), 'create multi instance';
 
     run_tests($block, $mw2);
+
+    my @config2 = (
+        'HTTP::Engine::Middleware::Static' => {
+            regexp  => qr{^(/css/.+|/robots\.txt)$},
+            docroot => Path::Class::Dir->new('t', 'htdocs')->stringify,
+        },
+    );
+
+    my $mw3 = HTTP::Engine::Middleware->new;
+    ok $mw3->install(@config2), 'firast instance';
+
+    run_tests($block, $mw3);
 };
 
 
