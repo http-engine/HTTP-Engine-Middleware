@@ -42,7 +42,7 @@ run {
 
     my @config = (
         'HTTP::Engine::Middleware::Static' => {
-            regexp  => qr{^(/css/.+|/robots\.txt)$},
+            regexp  => qr{^(/css/(?!dynamic).+|/robots\.txt)$},
             docroot => Path::Class::Dir->new('t', 'htdocs'),
         },
     );
@@ -59,7 +59,7 @@ run {
 
     my @config2 = (
         'HTTP::Engine::Middleware::Static' => {
-            regexp  => qr{^(/css/.+|/robots\.txt)$},
+            regexp  => qr{^(/css/(?!dynamic).+|/robots\.txt)$},
             docroot => Path::Class::Dir->new('t', 'htdocs')->stringify,
         },
     );
@@ -103,3 +103,8 @@ __END__
 --- body: forbidden
 --- code: 403
 
+=== handle backend
+--- uri: http://localhost/css/dynamic-unknown.css
+--- content_type: text/html
+--- body: dynamic
+--- code: 200
