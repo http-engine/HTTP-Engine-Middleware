@@ -5,7 +5,7 @@ use HTTP::Engine::Response;
 use MIME::Types;
 use Path::Class;
 use Cwd;
-use MooseX::Types::Path::Class;
+use MouseX::Types::Path::Class;
 use File::Spec::Unix;
 
 has 'regexp' => (
