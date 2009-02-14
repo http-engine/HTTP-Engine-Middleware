@@ -6,11 +6,19 @@ use MIME::Types;
 use Path::Class;
 use Cwd;
 use MouseX::Types::Path::Class;
+use Mouse::Util::TypeConstraints;
 use File::Spec::Unix;
+
+# corece of Regexp
+subtype 'HTTP::Engine::Middleware::Static::Regexp'
+    => as 'RegexpRef';
+coerce 'HTTP::Engine::Middleware::Static::Regexp'
+    => from 'Str' => via { qr/$_/ };
 
 has 'regexp' => (
     is       => 'ro',
-    isa      => 'Regexp',
+    isa      => 'HTTP::Engine::Middleware::Static::Regexp',
+    coerce   => 1,
     required => 1,
 );
 
@@ -161,6 +169,25 @@ through only the specific URL to backend
     # $ GET http//localhost/js/dynamic-json.js
     # to get the your application response
 
+Will you want to set config from yaml?
+
+    my $mw = HTTP::Engine::Middleware->new;
+    $mw->install( 'HTTP::Engine::Middleware::Static' => {
+        regexp  => '^/(robots.txt|favicon.ico|(?:css|img)/.+|js/(?!dynamic).+)$',
+        docroot => '/path/to/htdocs/',
+    });
+    HTTP::Engine->new(
+        interface => {
+            module => 'YourFavoriteInterfaceHere',
+            request_handler => $mw->handler( \&handler ),
+        }
+    )->run();
+
+    # $ GET http//localhost/js/jquery.js
+    # to get the /path/to/htdocs/js/jquery.js
+
+    # $ GET http//localhost/js/dynamic-json.js
+    # to get the your application response
 
 =head1 DESCRIPTION
 
