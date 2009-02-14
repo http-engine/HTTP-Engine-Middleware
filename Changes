@@ -1,5 +1,15 @@
 Revision history for Perl extension HTTP::Engine::Middleware
 
+0.03    2009-02-14T15:31:15+09:00
+        - added simple docs for each middlewares
+        - refactoring to log API for middleware
+        - Middleware::Static
+          change design. new one is simple
+          add customizable DirectoryIndex
+          fixed vulnerability: directory traversal
+          fixed bug to config breaks in Interface::Test and Interface::ModPerl
+        - tokurhiom++
+
 0.02    2009-02-12T23:08:46+09:00
         - add DebugRequest, FillInForm, Static
         - Unicode merged to Encode

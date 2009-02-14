@@ -31,6 +31,7 @@ lib/HTTP/Engine/Middleware/Profile/Role.pm
 lib/HTTP/Engine/Middleware/Profile/Runtime.pm
 lib/HTTP/Engine/Middleware/ReverseProxy.pm
 lib/HTTP/Engine/Middleware/Role.pm
+lib/HTTP/Engine/Middleware/Role/Logger.pm
 lib/HTTP/Engine/Middleware/Static.pm
 Makefile.PL
 MANIFEST			This list of files
@@ -54,7 +55,10 @@ t/200_middlewares/profile-runtime.t
 t/200_middlewares/profile.t
 t/200_middlewares/reverseproxy.t
 t/200_middlewares/static.t
+t/htdocs/css/mobile.css
 t/htdocs/index.html
+t/htdocs/manual/index.html
+t/htdocs/robots.txt
 t/lib/Foo/Middleware/Bar.pm
 t/lib/Foo/Middleware/Baz.pm
 t/lib/Foo/Middleware/Inner.pm
