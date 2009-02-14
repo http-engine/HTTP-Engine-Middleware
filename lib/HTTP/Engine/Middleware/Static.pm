@@ -21,6 +21,11 @@ has 'docroot' => (
     required => 1,
 );
 
+has directory_index => (
+    is  => 'ro',
+    isa => 'Str|Undef',
+);
+
 has 'mime_types' => (
     is  => 'ro',
     isa => 'MIME::Types',
@@ -40,9 +45,18 @@ before_handle {
     return $req unless $uri_path && $uri_path =~ /^(?:$re)$/;
 
     my $docroot = dir($self->docroot)->absolute;
-    my $file = $docroot->file(
-        File::Spec::Unix->splitpath($uri_path)
-    );
+    my $file = do {
+        if ($uri_path =~ m{/$} && $self->directory_index) {
+            $docroot->file(
+                File::Spec::Unix->splitpath($uri_path),
+                $self->directory_index
+            );
+        } else {
+            $docroot->file(
+                File::Spec::Unix->splitpath($uri_path)
+            )
+        }
+    };
 
     # check directory traversal
     my $realpath = Cwd::realpath($file->absolute->stringify);

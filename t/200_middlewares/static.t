@@ -43,7 +43,9 @@ run {
     my @config = (
         'HTTP::Engine::Middleware::Static' => {
             regexp  => qr{^(/css/(?!dynamic).+|/robots\.txt)$},
+            regexp  => qr{^(/(?:css|js|img)/(?!dynamic).+|/manual/.*|/robots\.txt)$},
             docroot => Path::Class::Dir->new('t', 'htdocs'),
+            directory_index => 'index.html',
         },
     );
 
@@ -59,8 +61,9 @@ run {
 
     my @config2 = (
         'HTTP::Engine::Middleware::Static' => {
-            regexp  => qr{^(/css/(?!dynamic).+|/robots\.txt)$},
+            regexp  => qr{^(/(?:css|js|img)/(?!dynamic).+|/manual/.*|/robots\.txt)$},
             docroot => Path::Class::Dir->new('t', 'htdocs')->stringify,
+            directory_index => 'index.html',
         },
     );
 
@@ -83,6 +86,12 @@ __END__
 --- uri: http://localhost/robots.txt
 --- content_type: text/plain
 --- body: robots.txt here
+--- code: 200
+
+=== directory index
+--- uri: http://localhost/manual/
+--- content_type: text/html
+--- body: index.html
 --- code: 200
 
 === css
