@@ -1,5 +1,10 @@
 Revision history for Perl extension HTTP::Engine::Middleware
 
+0.04    2009-02-15T14:29:01+09:00
+        - few fix release
+        - Middleware::Static: yaml friendly configuration
+        - Middleware::DebugRequest: fixed bug to test file
+
 0.03    2009-02-14T15:31:15+09:00
         - added simple docs for each middlewares
         - refactoring to log API for middleware
