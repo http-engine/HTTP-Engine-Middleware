@@ -1,12 +1,13 @@
 use strict;
 use warnings;
 use Test::More;
-plan tests => 9;
 
 eval q{ use HTTP::Request::Common };
 plan skip_all => "HTTP::Request::Common is not installed" if $@;
 eval q{ use Text::SimpleTable };
-plan skip_all => "Text::SimpleTable is not installed: $@" if $@;
+plan skip_all => "Text::SimpleTable is not installed" if $@;
+
+plan tests => 9;
 
 use HTTP::Engine;
 use HTTP::Engine::Middleware;
