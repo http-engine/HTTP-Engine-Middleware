@@ -3,16 +3,15 @@ use HTTP::Engine::Middleware;
 use HTTP::MobileAttribute;
 
 {
-    my $headers;
+    my $req;
     my $mobile_attribute;
     middleware_method 'mobile_attribute' => sub {
-        return unless $headers;
-        $mobile_attribute ||= HTTP::MobileAttribute->new( $headers );
+        return unless $req;
+        $mobile_attribute ||= HTTP::MobileAttribute->new( $req->headers );
     };
 
     before_handle {
-        my(undef, undef, $req) = @_;
-        $headers          = $req->headers;
+        (undef, undef, $req) = @_;
         $mobile_attribute = undef;
         $req;
     };
