@@ -2,7 +2,7 @@ package HTTP::Engine::Middleware::MobileAttribute;
 use HTTP::Engine::Middleware;
 use HTTP::MobileAttribute;
 
-middleware_method 'mobile_attribute' => sub {
+middleware_method 'HTTP::Engine::Request::mobile_attribute' => sub {
     my $self = shift;
     $self->{mobile_attribute} ||= HTTP::MobileAttribute->new( $self->headers );
 };
