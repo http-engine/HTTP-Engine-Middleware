@@ -38,4 +38,4 @@ my $out = $res->content;
 
 is $res->code, '200', 'response code';
 is $out, 'ok', 'response content';
-like $res->header('X-Runtime'), qr/^\d+\.\d+$/, 'X-Runtime header';
+ok looks_like_number($res->header('X-Runtime')), 'X-Runtime header time is number';
