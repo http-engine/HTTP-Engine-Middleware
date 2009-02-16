@@ -1,5 +1,14 @@
 Revision history for Perl extension HTTP::Engine::Middleware
 
+0.05    2009-02-16T18:12:40+09:00
+        - dependent to perl 5.8
+        - Middleware::MobileAttribute
+          pluggable injection style
+        - Middleware::Static
+          pod fix ( NAME section )
+        - fixed to profile runtime test's bug ( last test case )
+        - tidy up some middleware's test code
+
 0.04    2009-02-15T14:29:01+09:00
         - few fix release
         - Middleware::Static: yaml friendly configuration

@@ -1,7 +1,7 @@
 package HTTP::Engine::Middleware;
 use 5.00800;
 use Mouse;
-our $VERSION = '0.04';
+our $VERSION = '0.05';
 
 use Carp ();
 
