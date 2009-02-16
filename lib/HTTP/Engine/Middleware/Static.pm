@@ -95,7 +95,7 @@ __END__
 
 =head1 NAME
 
-HTTP::Engine::Middleware::Profile - handler for static files
+HTTP::Engine::Middleware::Static - handler for static files
 
 =head1 SYNOPSIS
 
