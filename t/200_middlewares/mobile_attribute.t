@@ -22,13 +22,13 @@ sub do_test {
     HTTP::Engine->new(
         interface => {
             module          => 'Test',
-            request_handler => sub {
+            request_handler => $mw->handler(sub {
                 my $req = shift;
 
                 $coderef->($req);
 
                 HTTP::Engine::Response->new( body => 'OK' );
-            },
+            }),
         },
     )->run( HTTP::Request->new( GET => 'http://example.org' ) );
 }

@@ -2,10 +2,21 @@ package HTTP::Engine::Middleware::MobileAttribute;
 use HTTP::Engine::Middleware;
 use HTTP::MobileAttribute;
 
-middleware_method 'HTTP::Engine::Request::mobile_attribute' => sub {
-    my $self = shift;
-    $self->{mobile_attribute} ||= HTTP::MobileAttribute->new( $self->headers );
-};
+{
+    my $headers;
+    my $mobile_attribute;
+    middleware_method 'mobile_attribute' => sub {
+        return unless $headers;
+        $mobile_attribute ||= HTTP::MobileAttribute->new( $headers );
+    };
+
+    before_handle {
+        my(undef, undef, $req) = @_;
+        $headers          = $req->headers;
+        $mobile_attribute = undef;
+        $req;
+    };
+}
 
 __MIDDLEWARE__
 
