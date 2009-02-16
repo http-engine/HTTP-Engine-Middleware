@@ -1,6 +1,6 @@
 package HTTP::Engine::Middleware::DoCoMoGUID;
 use HTTP::Engine::Middleware;
-use Scalar::Util qw/blessed/;
+use Scalar::Util ();
 use HTML::StickyQuery;
 
 after_handle {
@@ -8,7 +8,7 @@ after_handle {
 
     if (   $res->status == 200
         && $res->content_type =~ /html/
-        && not blessed $res->body
+        && not Scalar::Util::blessed $res->body
         && $res->body )
     {
         my $body = $res->body;
