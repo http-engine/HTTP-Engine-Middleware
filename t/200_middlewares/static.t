@@ -15,7 +15,6 @@ use HTTP::Engine;
 use HTTP::Engine::Middleware;
 use HTTP::Engine::Response;
 use HTTP::Request;
-use Path::Class;
 
 sub run_tests {
     my($block, $mw) = @_;
