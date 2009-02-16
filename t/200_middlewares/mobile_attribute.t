@@ -2,17 +2,15 @@ use strict;
 use warnings;
 use Test::More;
 
-eval { require HTTP::Engine; };
-plan skip_all => "HTTP::Engine is not installed." if $@;
-
-use HTTP::Request;
-use HTTP::Engine::Response;
-
-eval { require HTTP::MobileAttribute; };
+eval { use HTTP::MobileAttribute; };
 plan skip_all => "HTTP::MobileAttribute is not installed." if $@;
 
-plan tests => 3;
-use_ok 'HTTP::Engine::Middleware';
+plan tests => 2;
+
+use HTTP::Engine;
+use HTTP::Engine::Middleware;
+use HTTP::Engine::Response;
+use HTTP::Request;
 
 sub do_test {
     my $coderef = shift;

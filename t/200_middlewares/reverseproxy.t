@@ -1,14 +1,14 @@
 use strict;
 use warnings;
 use Test::Base;
+plan tests => 25;
+
 use HTTP::Engine;
 use HTTP::Engine::Middleware;
-use HTTP::Request;
 use HTTP::Headers;
+use HTTP::Request;
 
 filters { input => [qw/yaml/] };
-
-plan tests => 25;
 
 run {
     my $block = shift;

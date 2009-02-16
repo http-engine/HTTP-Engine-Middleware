@@ -1,20 +1,16 @@
 use strict;
 use warnings;
-use utf8;
-use lib '.';
 use Test::Base;
+
 eval q{ use HTML::StickyQuery };
 plan skip_all => "HTML::StickyQuery is not installed" if $@;
-eval q{ use HTTP::Engine };
-plan skip_all => "HTTP::Engine is not installed: $@" if $@;
 
 plan tests => 1 * blocks;
 
-use Encode;
-use URI;
-use HTTP::Request;
+use HTTP::Engine;
+use HTTP::Engine::Middleware;
 use HTTP::Engine::Response;
-eval q{ use HTTP::Engine::Middleware };
+use HTTP::Request;
 
 filters( { expected => qw/ chomp /, } );
 

@@ -11,6 +11,7 @@ name 'HTTP-Engine-Middleware';
 all_from 'lib/HTTP/Engine/Middleware.pm';
 
 requires 'HTTP::Engine' => '0.1.3';
+requires 'HTTP::Request';
 
 features(
 
@@ -53,6 +54,7 @@ features(
     'Encode' => [
         -default => 0,
         recommends_hack('Data::Visitor::Encode'),
+        recommends_hack('Encode'),
     ],
 
 # For Japanese Mobile
@@ -70,6 +72,7 @@ features(
 
 tests 't/*.t t/*/*.t t/*/*/*.t';
 author_tests 'xt';
+build_requires 'IO::Scalar';
 build_requires 'Test::More';
 build_requires 'YAML';
 use_test_base;

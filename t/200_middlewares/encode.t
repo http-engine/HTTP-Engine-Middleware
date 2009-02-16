@@ -1,20 +1,17 @@
 use strict;
 use warnings;
-use lib '.';
 use Test::Base;
+
 eval q{ use Data::Visitor::Encode };
 plan skip_all => "Data::Visitor::Encode is not installed" if $@;
-eval q{ use HTTP::Request };
-plan skip_all => "HTTP::Request is not installed" if $@;
-eval q{ use HTTP::Engine };
-plan skip_all => "HTTP::Engine is not installed: $@" if $@;
-
-eval q{ use HTTP::Engine::Middleware };
 
 plan tests => 5 * blocks;
 
+use HTTP::Engine;
+use HTTP::Engine::Middleware;
+use HTTP::Request;
+
 use Encode;
-use URI;
 
 filters { params => [qw/eval/], config => [qw/eval/] };
 

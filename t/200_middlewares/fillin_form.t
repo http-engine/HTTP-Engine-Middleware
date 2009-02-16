@@ -1,12 +1,15 @@
 use strict;
 use warnings;
-use HTTP::Engine::Middleware;
-use HTTP::Request;
-use HTTP::Engine;
 use Test::Base;
 
-plan skip_all => "HTML::FillInForm 2.00 required is FillInForm" unless eval "use HTML::FillInForm 2.00;1;";
-plan tests => 1*blocks;
+eval q{ use HTML::FillInForm 2.00 };
+plan skip_all => "HTML::FillInForm 2.00 required is FillInForm" if $@;
+
+plan tests => 1 * blocks;
+
+use HTTP::Engine;
+use HTTP::Engine::Middleware;
+use HTTP::Request;
 
 filters {
     middleware_args => [qw/eval/],

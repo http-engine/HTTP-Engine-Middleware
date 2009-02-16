@@ -1,17 +1,12 @@
 use strict;
 use warnings;
-use lib '.';
 use Test::Base;
-eval q{ use HTTP::Request::Common };
-plan skip_all => "HTTP::Request::Common is not installed" if $@;
-eval q{ use HTTP::Engine };
-plan skip_all => "HTTP::Engine is not installed: $@" if $@;
-
-eval q{ use HTTP::Engine::Middleware };
 
 plan tests => 2 * blocks;
 
-use URI;
+use HTTP::Engine;
+use HTTP::Engine::Middleware;
+use HTTP::Request::Common;
 
 filters { post_params => [qw/eval/], };
 

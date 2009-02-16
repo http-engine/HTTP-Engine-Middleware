@@ -6,15 +6,14 @@ eval q{ use CGI::ExceptionManager };
 plan skip_all => "CGI::ExceptionManager is not installed" if $@;
 eval q{ use Scope::Upper };
 plan skip_all => "Scope::Upper is not installed: $@" if $@;
-plan skip_all => "IO::Scalar is not installed: $@" unless eval "use IO::Scalar; 1;";
 
 plan tests => 7;
 
+use IO::Scalar;
 use HTTP::Engine;
+use HTTP::Engine::Middleware;
 use HTTP::Engine::Response;
 use HTTP::Request;
-
-use HTTP::Engine::Middleware;
 
 {
     my $mw = HTTP::Engine::Middleware->new;
