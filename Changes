@@ -1,5 +1,8 @@
 Revision history for Perl extension HTTP::Engine::Middleware
 
+0.06    2009-02-17T13:32:06+09:00
+        - fixed to Middleware::MobileAttributes's test bug
+
 0.05    2009-02-16T18:12:40+09:00
         - dependent to perl 5.8
         - Middleware::MobileAttribute
