@@ -2,7 +2,7 @@ use strict;
 use warnings;
 use Test::More;
 
-eval { use HTTP::MobileAttribute; };
+eval q{ use HTTP::MobileAttribute; };
 plan skip_all => "HTTP::MobileAttribute is not installed." if $@;
 
 plan tests => 2;
