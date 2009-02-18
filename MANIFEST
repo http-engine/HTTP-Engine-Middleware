@@ -24,6 +24,7 @@ lib/HTTP/Engine/Middleware/DebugScreen.pm
 lib/HTTP/Engine/Middleware/DoCoMoGUID.pm
 lib/HTTP/Engine/Middleware/Encode.pm
 lib/HTTP/Engine/Middleware/FillInForm.pm
+lib/HTTP/Engine/Middleware/HTTPSession.pm
 lib/HTTP/Engine/Middleware/MethodOverride.pm
 lib/HTTP/Engine/Middleware/MobileAttribute.pm
 lib/HTTP/Engine/Middleware/ModuleReload.pm
@@ -50,6 +51,7 @@ t/200_middlewares/debugscreen.t
 t/200_middlewares/docomo_guid.t
 t/200_middlewares/encode.t
 t/200_middlewares/fillin_form.t
+t/200_middlewares/httpsession.t
 t/200_middlewares/methodoverride.t
 t/200_middlewares/mobile_attribute.t
 t/200_middlewares/profile-runtime.t

@@ -71,7 +71,7 @@ features(
 
 # session support
 
-    'Session' => [
+    'HTTPSession' => [
         -default => 0,
         recommends_hack('MouseX::Types'),
         recommends_hack('HTTP::Session'),
