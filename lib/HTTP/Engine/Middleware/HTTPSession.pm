@@ -76,3 +76,44 @@ after_handle {
 };
 
 __MIDDLEWARE__
+
+__END__
+
+=head1 NAME
+
+HTTP::Engine::Middleware::HTTPSession - session support at midddleware layer
+
+=head1 SYNOPSIS
+
+    my $mw = HTTP::Engine::Middleware->new;
+    $mw->install( 'HTTP::Engine::Middleware::HTTPSession' => {
+        state => {
+            class => 'URI',
+            args  => {
+                session_id_name => 'foo_sid',
+            },
+        },
+        store => {
+            class => 'Test',
+            args => { },
+        },
+    });
+    HTTP::Engine->new(
+        interface => {
+            module => 'YourFavoriteInterfaceHere',
+            request_handler => $mw->handler( \&handler ),
+        }
+    )->run();
+
+=head1 DESCRIPTION
+
+This middleware add the session management stuff for your web application
+
+=head1 AUTHOR
+
+tokuhirom
+
+=head1 SEE ALSO
+
+L<HTTP::Engine::Middleware>, L<HTTP::Session>
+
