@@ -1,5 +1,5 @@
 package HTTP::Engine::Middleware::Profile::Runtime;
-use Mouse;
+use Any::Moose;
 with 'HTTP::Engine::Middleware::Profile::Role';
 
 use Time::HiRes qw(time);

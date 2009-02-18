@@ -2,8 +2,10 @@ use strict;
 use warnings;
 use Test::More;
 
-eval q{ use HTTP::Session; use MouseX::Types; };
+eval q{ use HTTP::Session; };
 plan skip_all => "HTTP::Session is not installed" if $@;
+eval q( { package foo; use Any::Moose;use Any::Moose 'X::Types' } );
+plan skip_all => "Mo[ou]seX::Types is not installed" if $@;
 
 plan tests => 8;
 

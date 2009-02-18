@@ -2,6 +2,10 @@ use strict;
 use warnings;
 use Test::More;
 
+if (Any::Moose::is_moose_loaded()) {
+    plan skip_all => 'this test case is doesnt work by use to Class::MOP::is_class_loaded method (by XS code)';
+}
+
 plan tests => 19;
 
 use HTTP::Engine;
@@ -11,7 +15,7 @@ use HTTP::Request;
 
 {
     package TestProfile;
-    use Mouse;
+    use Any::Moose;
     with 'HTTP::Engine::Middleware::Profile::Role';
 
     my $i = 1;

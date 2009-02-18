@@ -5,8 +5,8 @@ use HTTP::Engine::Response;
 use MIME::Types;
 use Path::Class;
 use Cwd;
-use MouseX::Types::Path::Class;
-use Mouse::Util::TypeConstraints;
+use Any::Moose 'X::Types::Path::Class';
+use Any::Moose '::Util::TypeConstraints';
 use File::Spec::Unix;
 
 # corece of Regexp

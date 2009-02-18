@@ -27,7 +27,7 @@ sub _build_profiler {
     my $class = $self->profiler_class;
     $class = "HTTP::Engine::Middleware::Profile::$class"
         unless $class =~ s/^\+//;
-    Mouse::load_class($class);
+    Any::Moose::load_class($class);
     $@ and Carp::croak($@);
     $class->new($self->config);
 }

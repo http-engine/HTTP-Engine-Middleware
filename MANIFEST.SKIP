@@ -19,3 +19,4 @@
 ^\.shipit$
 \.sw[po]$
 ^\.git
+^t/moose/

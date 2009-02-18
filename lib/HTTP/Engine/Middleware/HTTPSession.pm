@@ -1,7 +1,7 @@
 package HTTP::Engine::Middleware::HTTPSession;
 use HTTP::Engine::Middleware;
 use Scalar::Util qw/blessed/;
-use MouseX::Types -declare => [qw/State Store/];
+use Any::Moose 'X::Types' => [ -declare => [qw/State Store/] ];
 
 subtype State,
     as 'CodeRef';
@@ -16,7 +16,7 @@ coerce State,
         via {
             my $klass = $_->{class};
             $klass = $klass =~ s/^\+// ? $klass : "HTTP::Session::State::${klass}";
-            Mouse::load_class($klass);
+            Any::Moose::load_class($klass);
             my $obj = $klass->new( $_->{args} );
             sub { $obj };
         };
@@ -34,7 +34,7 @@ coerce Store,
         via {
             my $klass = $_->{class};
             $klass = $klass =~ s/^\+// ? $klass : "HTTP::Session::Store::${klass}";
-            Mouse::load_class($klass);
+            Any::Moose::load_class($klass);
             $klass->new( $_->{args} );
             my $obj = $klass->new( $_->{args} );
             sub { $obj };
