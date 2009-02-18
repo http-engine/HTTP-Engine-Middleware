@@ -68,6 +68,14 @@ features(
         -default => 0,
         recommends_hack('HTML::StickyQuery'),
     ],
+
+# session support
+
+    'Session' => [
+        -default => 0,
+        recommends_hack('MouseX::Types'),
+        recommends_hack('HTTP::Session'),
+    ],
 );
 
 tests 't/*.t t/*/*.t t/*/*/*.t';
