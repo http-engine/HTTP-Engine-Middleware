@@ -1,5 +1,5 @@
 package HTTP::Engine::Middleware::Role;
-use Any::Moose 'Role';
+use Any::Moose '::Role';
 
 has 'before_handles' => (
     is      => 'ro',

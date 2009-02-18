@@ -1,5 +1,5 @@
 package HTTP::Engine::Middleware::Role::Logger;
-use Any::Moose 'Role';
+use Any::Moose '::Role';
 
 has 'logger' => (
     is       => 'rw',
