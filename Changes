@@ -1,5 +1,8 @@
 Revision history for Perl extension HTTP::Engine::Middleware
 
+0.08_01 2009-02-18T22:40:51+09:00
+        - switched to Any::Moose
+
 0.07    2009-02-18T20:54:40+09:00
         - added HTTPSession # tokuhirom++
 
