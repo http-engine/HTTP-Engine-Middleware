@@ -2,6 +2,10 @@ use strict;
 use warnings;
 use Test::More;
 
+if (Any::Moose::is_moose_loaded()) {
+    plan skip_all => 'this test case is doesnt work by use to Class::MOP::is_class_loaded method (by XS code)';
+}
+
 plan tests => 19;
 
 use HTTP::Engine;
