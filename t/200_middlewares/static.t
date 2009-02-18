@@ -7,8 +7,8 @@ eval q{ use MIME::Types };
 plan skip_all => "MIME::Types is not installed" if $@;
 eval q{ use Path::Class };
 plan skip_all => "Path::Class is not installed" if $@;
-eval q{ use MouseX::Types::Path::Class };
-plan skip_all => "MouseX::Types::Path::Class is not installed" if $@;
+eval q( { package foo; use Any::Moose;use Any::Moose 'X::Types::Path::Class' } );
+plan skip_all => "Mo[ou]seX::Types::Path::Class is not installed" if $@;
 
 plan tests => 12 * blocks;
 

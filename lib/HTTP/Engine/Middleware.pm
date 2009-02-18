@@ -1,6 +1,9 @@
 package HTTP::Engine::Middleware;
 use 5.00800;
-use Mouse;
+use Any::Moose;
+use Any::Moose (
+    '::Util' => [qw/apply_all_roles/],
+);
 our $VERSION = '0.07';
 
 use Carp ();
@@ -29,8 +32,8 @@ has 'diecatch' => (
 
 sub init_class {
     my $klass = shift;
-    my $meta  = Mouse::Meta::Class->initialize($klass);
-    $meta->superclasses('Mouse::Object')
+    my $meta  = any_moose('::Meta::Class')->initialize($klass);
+    $meta->superclasses(any_moose('::Object'))
         unless $meta->superclasses;
 
     no strict 'refs';
@@ -49,7 +52,11 @@ sub import {
 
     init_class($caller);
 
-    Mouse->export_to_level(1);    
+    if (Any::Moose::is_moose_loaded()) {
+        Moose->import({ into_level => 1 });
+    } else {
+        Mouse->export_to_level( 1 );
+    }
 
     no strict 'refs';
     *{"$caller\::__MIDDLEWARE__"} = sub {
@@ -68,8 +75,9 @@ sub import {
 sub __MIDDLEWARE__ {
     my ( $caller, ) = @_;
 
-    Mouse::unimport;
-    Mouse::Util::apply_all_roles( $caller, 'HTTP::Engine::Middleware::Role' );
+    Any::Moose::unimport;
+    apply_all_roles( $caller, 'HTTP::Engine::Middleware::Role' );
+
     $caller->meta->make_immutable( inline_destructor => 1 );
     "MIDDLEWARE";
 }
@@ -139,7 +147,7 @@ sub install {
             local *outer_middleware = sub { push @{ $dependend{$name}->{outer} }, $_[0] };
             local *inner_middleware = sub { push @{ $dependend{$name}->{inner} }, $_[0] };
 
-            Mouse::load_class($name);
+            Any::Moose::load_class($name);
 
             *{"$name\::_before_handles"}    = sub () { @before_handles };
             *{"$name\::_after_handles"}     = sub () { @after_handles };
@@ -161,15 +169,24 @@ sub install {
     my %sort = map { $_ => $i++ } @{ $self->middlewares };
     while (my($from, $conf) = each %dependend) {
         for my $to (@{ $conf->{outer} }) {
-            Carp::croak "'$from' need to '$to'" unless Mouse::is_class_loaded($to);
+            Carp::croak "'$from' need to '$to'" unless is_class_loaded($to);
             $sort{$to} = $sort{$from} - 1;
         }
         for my $to (@{ $conf->{inner} }) {
-            Carp::croak "'$from' need to '$to'" unless Mouse::is_class_loaded($to);
+            Carp::croak "'$from' need to '$to'" unless is_class_loaded($to);
             $sort{$to} = $sort{$from} + 1;
         }
     }
     @{ $self->middlewares } = sort { $sort{$a} <=> $sort{$b} } keys %sort;
+}
+
+sub is_class_loaded {
+    my $class = shift;
+    if (Any::Moose::is_moose_loaded()) {
+        return Class::MOP::is_class_loaded( $class );
+    } else {
+        return Mouse::is_class_loaded( $class );
+    }
 }
 
 sub instance_of {

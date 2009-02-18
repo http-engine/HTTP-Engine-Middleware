@@ -11,7 +11,7 @@ use HTTP::Request;
 
 {
     package TestProfile;
-    use Mouse;
+    use Any::Moose;
     with 'HTTP::Engine::Middleware::Profile::Role';
 
     my $i = 1;
