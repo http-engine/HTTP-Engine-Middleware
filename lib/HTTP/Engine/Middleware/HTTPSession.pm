@@ -81,7 +81,7 @@ __END__
 
 =head1 NAME
 
-HTTP::Engine::Middleware::HTTPSession - session support at midddleware layer
+HTTP::Engine::Middleware::HTTPSession - session support at middleware layer
 
 =head1 SYNOPSIS
 
