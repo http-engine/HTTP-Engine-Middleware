@@ -1,4 +1,16 @@
 use inc::Module::Install;
+BEGIN
+{
+    if (!$ENV{SHIPIT} && eval {
+        require Moose  && Moose->VERSION(
+            '0.68'
+        )
+    }) {
+        *HAVE_MOOSE = sub { 1 };
+    } else {
+        *HAVE_MOOSE = sub { 0 };
+    }
+}
 
 {
     no warnings 'redefine';
@@ -10,7 +22,7 @@ use inc::Module::Install;
 name 'HTTP-Engine-Middleware';
 all_from 'lib/HTTP/Engine/Middleware.pm';
 
-requires 'HTTP::Engine' => '0.1.3';
+requires 'HTTP::Engine' => '0.1.4_01';
 requires 'HTTP::Request';
 
 features(
@@ -78,11 +90,71 @@ features(
     ],
 );
 
-tests 't/*.t t/*/*.t t/*/*/*.t';
+my @tests = qw( t/*.t t/*/*.t t/*/*/*.t );
 author_tests 'xt';
+
+if (HAVE_MOOSE) {
+    my $tests = 
+        join ' ', (
+            @tests,
+            (map {
+                my $t = $_;
+                $t =~ s{^t/}{t/moose/};
+                ($t eq 't/moose/*.t' || $t eq 't/moose/*/*.t') ? () : $t;
+            } @tests)
+        );
+    tests($tests);
+} else {
+    tests(join ' ', @tests);
+}
+
 build_requires 'IO::Scalar';
 build_requires 'Test::More';
 build_requires 'YAML';
 use_test_base;
 auto_include;
 WriteAll;
+
+# generate moose's test
+if (HAVE_MOOSE) {
+    warn "generating to Moose's test... please wait few minutes";
+    my @testfiles;
+    require File::Find;
+    require File::Path;
+    require File::Spec;
+
+    File::Path::rmtree(File::Spec->catfile( 't', 'moose' ));
+
+    File::Find::find(
+        sub {
+            return if $File::Find::dir =~ /\./ || /^\./; # skip dot directory
+            return unless -f $_;
+
+            my @dirs = File::Spec->splitpath( $File::Find::dir );
+            while (!!!$dirs[0]) {
+                shift @dirs;
+            }
+            shift @dirs;
+            return if $dirs[0] eq 'xxx'; # skip to moose's test directory remover
+            push @testfiles, [ $File::Find::dir, File::Spec->catfile( 't', 'moose', @dirs ), $_ ];
+        }, 't'
+    );
+
+    for my $stuff (@testfiles) {
+        File::Path::mkpath($stuff->[1]);
+
+        my $from = File::Spec->catfile($stuff->[0], $stuff->[2]);
+        my $to   = File::Spec->catfile($stuff->[1], $stuff->[2]);
+
+        open my $from_fh, '<', $from;
+        open my $to_fh, '>', $to;
+        if ($to =~ /\.t$/) {
+            print $to_fh "{ package dummy_load_moose; use Moose; }\n";
+        }
+
+        while (<$from_fh>) {
+            print $to_fh $_;
+        }
+    }
+    warn "... done";
+}
