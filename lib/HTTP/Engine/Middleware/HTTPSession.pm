@@ -52,28 +52,37 @@ has 'store' => (
     coerce => 1,
 );
 
-my $SESSION;
+{
+    my $SESSION;
+    my $SELF;
+    my $REQ;
 
-middleware_method 'session' => sub {
-    $SESSION
-};
+    middleware_method 'session' => sub {
+        $SESSION ||= HTTP::Session->new(
+            state   => $SELF->state->(),
+            store   => $SELF->store->(),
+            request => $REQ,
+        );
+    };
 
-before_handle {
-    my ($c, $self, $req) = @_;
-    $SESSION = HTTP::Session->new(
-        state   => $self->state->(),
-        store   => $self->store->(),
-        request => $req,
-    );
-    $req;
-};
+    before_handle {
+        (undef, $SELF, $REQ) = @_;
+        undef $SESSION;
+        $REQ;
+    };
 
-after_handle {
-    my ($c, $self, $req, $res) = @_;
-    $SESSION->response_filter($res);
-    $SESSION->finalize();
-    $res;
-};
+    after_handle {
+        my ($c, $self, $req, $res) = @_;
+        if ($SESSION) {
+            $SESSION->response_filter($res);
+            $SESSION->finalize();
+        }
+        undef $SESSION;
+        undef $SELF;
+        undef $REQ;
+        $res;
+    };
+}
 
 __MIDDLEWARE__
 

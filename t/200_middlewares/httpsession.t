@@ -5,7 +5,7 @@ use Test::More;
 eval q{ use HTTP::Session; use MouseX::Types; };
 plan skip_all => "HTTP::Session is not installed" if $@;
 
-plan tests => 6;
+plan tests => 8;
 
 use HTTP::Engine;
 use HTTP::Engine::Middleware;
@@ -13,7 +13,9 @@ use HTTP::Engine::Response;
 use HTTP::Request;
 use HTTP::Request::Common;
 
-MAIN: {
+sub run_engine (&) {
+    my $code = shift;
+
     my $mw = HTTP::Engine::Middleware->new({method_class => 'HTTP::Engine::Request'});
     $mw->install(
         'HTTP::Engine::Middleware::HTTPSession' => {
@@ -34,15 +36,34 @@ MAIN: {
     my $res = HTTP::Engine->new(
         interface => {
             module          => 'Test',
-            request_handler => $mw->handler(
-                sub { my $req = shift; $req->session; HTTP::Engine::Response->new( body => '<a href="/tmp/">foo</a>' ) }
-            ),
+            request_handler => $mw->handler( $code ),
         },
     )->run($request);
-    my $out = $res->content;
 
+    return $res;
+}
+
+MAIN: {
+
+    my $res = run_engine {
+        my $req = shift;
+        $req->session;
+        HTTP::Engine::Response->new( body => '<a href="/tmp/">foo</a>' );
+    };
+
+    my $out = $res->content;
     is $res->code, '200', 'response code';
     like $out, qr{<a href="/tmp/\?foo_sid=.{32}">foo</a>}, 'response content';
+
+
+    $res = run_engine {
+        my $req = shift;
+        HTTP::Engine::Response->new( body => '<a href="/tmp/">foo</a>' );
+    };
+
+    $out = $res->content;
+    is $res->code, '200', 'response code';
+    like $out, qr{<a href="/tmp/">foo</a>}, 'response content';
 };
 
 COERCE: {
