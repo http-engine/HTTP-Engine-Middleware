@@ -281,8 +281,6 @@ HTTP::Engine::Middleware is official middlewares distribution of HTTP::Engine.
 
 =head1 WISHLIST
 
-Session
-
 Authentication
 
 OpenID
