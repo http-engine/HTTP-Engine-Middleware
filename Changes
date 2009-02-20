@@ -1,5 +1,8 @@
 Revision history for Perl extension HTTP::Engine::Middleware
 
+0.08    2009-02-20T14:27:42+09:00
+         - release to Any::Moose HTTP::Engine::Middleware
+
 0.08_02 2009-02-19T12:20:07+09:00
         - depend explicitly for Any::Moose and Mouse
 
