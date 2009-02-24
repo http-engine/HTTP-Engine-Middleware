@@ -4,7 +4,7 @@ BEGIN
     if (!$ENV{SHIPIT} && eval {
         require Moose  && Moose->VERSION(
             '0.68'
-        )
+        ) && require MooseX::Types
     }) {
         *HAVE_MOOSE = sub { 1 };
     } else {
