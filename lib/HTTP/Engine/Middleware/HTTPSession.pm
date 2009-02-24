@@ -2,6 +2,7 @@ package HTTP::Engine::Middleware::HTTPSession;
 use HTTP::Engine::Middleware;
 use Scalar::Util qw/blessed/;
 use Any::Moose 'X::Types' => [ -declare => [qw/State Store/] ];
+use HTTP::Session;
 
 subtype State,
     as 'CodeRef';
