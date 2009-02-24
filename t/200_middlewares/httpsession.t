@@ -4,6 +4,8 @@ use Test::More;
 
 eval q{ use HTTP::Session; };
 plan skip_all => "HTTP::Session is not installed" if $@;
+eval q{ use HTTP::Session::State::URI; };
+plan skip_all => "HTTP::Session::State::URI is not loaded: $@" if $@;
 eval q( { package foo; use Any::Moose;use Any::Moose 'X::Types' } );
 plan skip_all => "Mo[ou]seX::Types is not installed" if $@;
 
