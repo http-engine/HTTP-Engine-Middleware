@@ -36,7 +36,6 @@ coerce Store,
             my $klass = $_->{class};
             $klass = $klass =~ s/^\+// ? $klass : "HTTP::Session::Store::${klass}";
             Any::Moose::load_class($klass);
-            $klass->new( $_->{args} );
             my $obj = $klass->new( $_->{args} );
             sub { $obj };
         };
