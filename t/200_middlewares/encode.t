@@ -5,7 +5,7 @@ use Test::Base;
 eval q{ use Data::Visitor::Encode };
 plan skip_all => "Data::Visitor::Encode is not installed" if $@;
 
-plan tests => 5 * blocks;
+plan tests => 4 * blocks;
 
 use HTTP::Engine;
 use HTTP::Engine::Middleware;
@@ -30,7 +30,9 @@ run {
         my $req = shift;
         ok Encode::is_utf8( $req->params->{'nite'} ), 'params is utf8';
         is_deeply $req->params, $block->params, $block->name . ' params';
-        HTTP::Engine::Response->new( body => decode('utf8', 'OKです!') );
+        my $res = HTTP::Engine::Response->new( body => decode('utf8', 'OKです!') );
+        $res->content_type( $block->send_content_type ) if $block->send_content_type;
+        $res;
     };
 
     my $response = HTTP::Engine->new(
@@ -44,13 +46,6 @@ run {
     ok !Encode::is_utf8( $content ), 'not utf8';
     $content = encode('utf8', decode($config->{encode}, $content)) if $config->{encode};
     is $content, 'OKです!', 'content';
-
-    if ($config->{encode}) {
-        my $encode = $config->{content_type_charset} || $config->{encode};
-        like $response->header('content-type'), qr/$encode/, 'content-type charset ' . $encode;
-    } else {
-       like $response->header('content-type'), qr/utf-?8/, 'content-type charset';
-   }
 };
 
 __END__
@@ -59,58 +54,88 @@ __END__
 --- uri: http://localhost/?nite=%E3%81%97%E3%83%BC%E3%81%88%E3%81%99%E3%81%88%E3%81%99
 --- content_type : text/plain
 --- params: { nite => "\x{3057}\x{30fc}\x{3048}\x{3059}\x{3048}\x{3059}" }
+--- response_content_type: text/html; charset=utf-8
 
 === header utf-8
 --- uri: http://localhost/?nite=%E3%81%97%E3%83%BC%E3%81%88%E3%81%99%E3%81%88%E3%81%99
 --- content_type : text/plain; charset=utf-8
 --- params: { nite => "\x{3057}\x{30fc}\x{3048}\x{3059}\x{3048}\x{3059}" }
 --- config: { detected_decode_by_header => 1 }
+--- response_content_type: text/html; charset=utf-8
 
 === header ascii
 --- uri: http://localhost/?nite=nipotan
 --- content_type: text/plain; charset=ascii
 --- params : {nite => 'nipotan'}
 --- config: { detected_decode_by_header => 1 }
+--- response_content_type: text/html; charset=utf-8
 
 === header euc-jp
 --- uri: http://localhost/?nite=%A4%B7%A1%BC%A4%A8%A4%B9%A4%A8%A4%B9
 --- content_type: text/plain; charset=euc-jp
 --- params: { nite => "\x{3057}\x{30fc}\x{3048}\x{3059}\x{3048}\x{3059}" }
 --- config: { detected_decode_by_header => 1 }
+--- response_content_type: text/html; charset=utf-8
 
 === config utf-8
 --- uri: http://localhost/?nite=%E3%81%97%E3%83%BC%E3%81%88%E3%81%99%E3%81%88%E3%81%99
 --- content_type : text/plain
 --- params: { nite => "\x{3057}\x{30fc}\x{3048}\x{3059}\x{3048}\x{3059}" }
 --- config: { decode => 'utf-8' }
+--- response_content_type: text/html; charset=utf-8
 
 === config ascii
 --- uri: http://localhost/?nite=nipotan
 --- content_type: text/plain
 --- params : {nite => 'nipotan'}
 --- config: { decode => 'ascii' }
+--- response_content_type: text/html; charset=utf-8
 
 === config euc-jp
 --- uri: http://localhost/?nite=%A4%B7%A1%BC%A4%A8%A4%B9%A4%A8%A4%B9
 --- content_type: text/plain
 --- params: { nite => "\x{3057}\x{30fc}\x{3048}\x{3059}\x{3048}\x{3059}" }
 --- config: { decode => 'euc-jp' }
+--- response_content_type: text/html; charset=utf-8
 
 === encode utf-8
 --- uri: http://localhost/?nite=%E3%81%97%E3%83%BC%E3%81%88%E3%81%99%E3%81%88%E3%81%99
 --- content_type : text/plain
 --- params: { nite => "\x{3057}\x{30fc}\x{3048}\x{3059}\x{3048}\x{3059}" }
 --- config: { encode => 'utf-8' }
+--- response_content_type: text/html; charset=utf-8
 
 === encode ascii
 --- uri: http://localhost/?nite=nipotan
 --- content_type: text/plain
 --- params : {nite => 'nipotan'}
 --- config: { encode => 'cp932', content_type_charset => 'Shift-JIS' }
+--- response_content_type: text/html; charset=Shift-JIS
 
 === encode euc-jp
 --- uri: http://localhost/?nite=%E3%81%97%E3%83%BC%E3%81%88%E3%81%99%E3%81%88%E3%81%99
 --- content_type : text/plain
 --- params: { nite => "\x{3057}\x{30fc}\x{3048}\x{3059}\x{3048}\x{3059}" }
 --- config: { encode => 'euc-jp' }
+--- response_content_type: text/html; charset=euc-jp
 
+=== text plain
+--- uri: http://localhost/?nite=nipotan
+--- content_type: text/plain; charset=ascii
+--- params : {nite => 'nipotan'}
+--- send_content_type: text/plain
+--- response_content_type: text/plain; charset=utf-8
+
+=== text plain charset overwrite
+--- uri: http://localhost/?nite=nipotan
+--- content_type: text/plain; charset=ascii
+--- params : {nite => 'nipotan'}
+--- send_content_type: text/plain; charset=ascii
+--- response_content_type: text/plain; charset=utf-8
+
+=== application/x-http-engine
+--- uri: http://localhost/?nite=nipotan
+--- content_type: text/plain; charset=ascii
+--- params : {nite => 'nipotan'}
+--- send_content_type: application/x-http-engine
+--- response_content_type: application/x-http-engine

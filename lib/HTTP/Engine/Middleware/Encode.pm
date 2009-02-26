@@ -56,12 +56,15 @@ after_handle {
         my $encoding = $self->encode;
         $res->body( Encode::encode( $encoding, $body ) );
 
-        $encoding = $self->content_type_charset if $self->content_type_charset;
-        my $content_type = $res->content_type;
-        unless ($content_type =~ s/charset\s*=\s*[^\s]*;?/charset=$encoding/ ) {
-            $content_type .= "charset=$encoding;";
+        my $content_type = $res->content_type || 'text/html';
+        if ($content_type =~ m!^text/!) {
+            $encoding = $self->content_type_charset if $self->content_type_charset;
+            unless ($content_type =~ s/charset\s*=\s*[^\s]*;?/charset=$encoding/ ) {
+                $content_type .= '; ' unless $content_type =~ /;\s*$/;
+                $content_type .= "charset=$encoding";
+            }
+            $res->content_type( $content_type );
         }
-        $res->content_type( $content_type );
     }
 
     $res;
