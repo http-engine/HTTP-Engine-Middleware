@@ -1,5 +1,9 @@
 Revision history for Perl extension HTTP::Engine::Middleware
 
+0.10    2009-02-27T11:46:35+09:00
+        - Encode: fixed some problem on charset of content-type
+        - HTTPSession: fixed create instance duped
+
 0.09    2009-02-24T15:08:00+09:00
         - fixed moose's test doesnt work bug (required MooseX::Types)
         - fixed HTTPSession's test doesnt work bug (required HTML::StickyQuery)
