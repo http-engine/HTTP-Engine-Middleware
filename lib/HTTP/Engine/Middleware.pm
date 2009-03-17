@@ -82,25 +82,17 @@ sub __MIDDLEWARE__ {
     "MIDDLEWARE";
 }
 
-sub before_handle {
-    Carp::croak "Can't call before_handle function outside Middleware's load phase";
-}
-
-sub after_handle {
-    Carp::croak "Can't call after_handle function outside Middleware's load phase";
-}
-
-sub middleware_method {
-    Carp::croak "Can't call middleware_method function outside Middleware's load phase";
-}
-
-sub outer_middleware {
-    Carp::croak "Can't call outer_middleware function outside Middleware's load phase";
-}
-
-sub inner_middleware {
-    Carp::croak "Can't call inner_middleware function outside Middleware's load phase";
-}
+BEGIN {
+    no strict 'refs';
+    for my $meth (
+        qw(before_handle after_handle middleware_method outer_middleware inner_middleware)
+      )
+    {
+        *{__PACKAGE__ . "::$meth"} = sub {
+            Carp::croak("Can't call ${meth} function outside Middleware's load phase");
+        };
+    }
+};
 
 sub install {
     my($self, @middlewares) = @_;
