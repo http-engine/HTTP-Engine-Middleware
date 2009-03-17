@@ -65,11 +65,11 @@ sub import {
         __MIDDLEWARE__($caller);
     };
 
-    *{"$caller\::before_handle"}     = sub (&) { goto \&before_handle; };
-    *{"$caller\::after_handle"}      = sub (&) { goto \&after_handle; };
-    *{"$caller\::middleware_method"} = sub { goto \&middleware_method; };
-    *{"$caller\::outer_middleware"}  = sub ($) { goto \&outer_middleware; };
-    *{"$caller\::inner_middleware"}  = sub ($)  { goto \&inner_middleware; };
+    *{"$caller\::before_handle"}     = sub (&) { goto \&before_handle     };
+    *{"$caller\::after_handle"}      = sub (&) { goto \&after_handle      };
+    *{"$caller\::middleware_method"} = sub     { goto \&middleware_method };
+    *{"$caller\::outer_middleware"}  = sub ($) { goto \&outer_middleware  };
+    *{"$caller\::inner_middleware"}  = sub ($) { goto \&inner_middleware  };
 }
 
 sub __MIDDLEWARE__ {
