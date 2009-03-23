@@ -4,3 +4,5 @@ blib/
 inc/
 pm_to_blib
 Makefile.old
+*.sw[pon]
+t/moose/
