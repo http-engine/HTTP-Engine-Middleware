@@ -174,11 +174,7 @@ sub install {
 
 sub is_class_loaded {
     my $class = shift;
-    if (Any::Moose::is_moose_loaded()) {
-        return Class::MOP::is_class_loaded( $class );
-    } else {
-        return Mouse::is_class_loaded( $class );
-    }
+    return Any::Moose::is_class_loaded($class);
 }
 
 sub instance_of {
