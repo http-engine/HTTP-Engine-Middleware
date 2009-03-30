@@ -3,7 +3,7 @@ BEGIN
 {
     if (!$ENV{SHIPIT} && eval {
         require Moose  && Moose->VERSION(
-            '0.68'
+            '0.73'
         ) && require MooseX::Types
     }) {
         *HAVE_MOOSE = sub { 1 };
