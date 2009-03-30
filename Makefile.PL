@@ -113,6 +113,7 @@ if (HAVE_MOOSE) {
 build_requires 'IO::Scalar';
 build_requires 'Test::More';
 build_requires 'YAML';
+auto_set_repository;
 use_test_base;
 auto_include;
 WriteAll;
