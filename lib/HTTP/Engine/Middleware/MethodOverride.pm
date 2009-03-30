@@ -39,7 +39,7 @@ sub override_request_method {
         || $req->header( $self->HTTP_METHOD_OVERRIDE_HEADER );
 
     if ( ($overload && grep { $_ eq $overload } @{ $self->HTTP_METHODS } ) != 0 ) {
-        $req->method( uc $overload ) if $overload;
+        $req->method( uc $overload );
     }
     $req;
 }
