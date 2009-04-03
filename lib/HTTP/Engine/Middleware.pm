@@ -143,10 +143,11 @@ sub _create_middleware_instance {
             $dependend->{$klass}->{inner} = [ $klass->_inner_middlewares ];
         }
 
-        my $instance = $klass->new($config);
-        @{ $instance->before_handles } = $klass->_before_handles;
-        @{ $instance->after_handles }  = $klass->_after_handles;
-
+        my $instance = $klass->new(
+            %$config,
+            before_handles => [$klass->_before_handles()],
+            after_handles  => [$klass->_after_handles() ],
+        );
         $instances{$klass} = $instance;
     }
 
