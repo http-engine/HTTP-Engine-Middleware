@@ -129,47 +129,18 @@ sub _create_middleware_instance {
     my ($self, $args) = @_;
 
     my %instances;
-    my %dependend;
+    my $dependend;
     for my $stuff (@$args) {
         my $name   = $stuff->[0];
         my $config = $stuff->[1];
 
-        $dependend{$name} = { outer => [], inner => [] };
+        $dependend->{$name} = { outer => [], inner => [] };
 
-        unless ($name->can('before_handles')) { # what's this mean?
-            # init declear
-            my @before_handles;
-            my @after_handles;
-
-            no strict 'refs';
-            no warnings 'redefine';
-
-            local *before_handle = sub { push @before_handles, @_ };
-            local *after_handle  = sub { push @after_handles, @_ };
-            local *middleware_method = sub {
-                my($method, $code) = @_;
-                my $method_class = $self->method_class;
-                if ($method =~ /^(.+)\:\:([^\:]+)$/) {
-                    ($method_class, $method) = ($1, $2);
-                }
-                return unless $method_class;
-
-                no strict 'refs';
-                *{"$name\::$method"}         = $code;
-                *{"$method_class\::$method"} = $code;
-            };
-            local *outer_middleware = sub { push @{ $dependend{$name}->{outer} }, $_[0] };
-            local *inner_middleware = sub { push @{ $dependend{$name}->{inner} }, $_[0] };
-
-            Any::Moose::load_class($name);
-
-            *{"$name\::_before_handles"}    = sub () { @before_handles };
-            *{"$name\::_after_handles"}     = sub () { @after_handles };
-            *{"$name\::_outer_middlewares"} = sub () { @{ $dependend{$name}->{outer} } };
-            *{"$name\::_inner_middlewares"} = sub () { @{ $dependend{$name}->{inner} } };
+        if (! $name->can('before_handles')) { # not initialized yet?
+            $dependend = $self->_init_middleware_class($name, $dependend);
         } else {
-            $dependend{$name}->{outer} = [ $name->_outer_middlewares ];
-            $dependend{$name}->{inner} = [ $name->_inner_middlewares ];
+            $dependend->{$name}->{outer} = [ $name->_outer_middlewares ];
+            $dependend->{$name}->{inner} = [ $name->_inner_middlewares ];
         }
 
         my $instance = $name->new($config);
@@ -182,7 +153,44 @@ sub _create_middleware_instance {
     push @{ $self->middlewares }, map { $_->[0] } @$args;
     $self->_instance_of(+{ %instances, %{ $self->_instance_of || {} } });
 
-    return \%dependend;
+    return $dependend;
+}
+
+# load one middleware 'class'
+sub _init_middleware_class {
+    my ($self, $klass, $dependend) = @_;
+
+    my @before_handles;
+    my @after_handles;
+
+    no warnings 'redefine';
+
+    local *before_handle = sub { push @before_handles, @_ };
+    local *after_handle  = sub { push @after_handles, @_ };
+    local *middleware_method = sub {
+        my($method, $code) = @_;
+        my $method_class = $self->method_class;
+        if ($method =~ /^(.+)\:\:([^\:]+)$/) {
+            ($method_class, $method) = ($1, $2);
+        }
+        return unless $method_class;
+
+        no strict 'refs';
+        *{"$klass\::$method"}         = $code;
+        *{"$method_class\::$method"} = $code;
+    };
+    local *outer_middleware = sub { push @{ $dependend->{$klass}->{outer} }, $_[0] };
+    local *inner_middleware = sub { push @{ $dependend->{$klass}->{inner} }, $_[0] };
+
+    Any::Moose::load_class($klass);
+
+    no strict 'refs';
+    *{"${klass}::_before_handles"}    = sub () { @before_handles };
+    *{"${klass}::_after_handles"}     = sub () { @after_handles };
+    *{"${klass}::_outer_middlewares"} = sub () { @{ $dependend->{$klass}->{outer} } };
+    *{"${klass}::_inner_middlewares"} = sub () { @{ $dependend->{$klass}->{inner} } };
+
+    $dependend;
 }
 
 # i want to remove this -- tokuhirom 20090403
