@@ -98,8 +98,8 @@ sub install {
     my($self, @middlewares) = @_;
 
     my $args = $self->_build_args(@middlewares);
-    my $dependend = $self->_create_middleware_instance($args);
-    my $scores = $self->_check_deps_and_calc_sort_score($dependend);
+    $self->_create_middleware_instance($args);
+    my $scores = $self->_check_deps_and_calc_sort_score();
     @{ $self->middlewares } = sort { $scores->{$a} <=> $scores->{$b} } keys %$scores;
 }
 
@@ -125,22 +125,17 @@ sub _build_args {
 }
 
 # load & create middleware instance
+my %IS_INITIALIZED;
 sub _create_middleware_instance {
     my ($self, $args) = @_;
 
     my %instances;
-    my $dependend;
     for my $stuff (@$args) {
         my $klass  = $stuff->[0];
         my $config = $stuff->[1];
 
-        $dependend->{$klass} = { outer => [], inner => [] };
-
-        if (! $klass->can('before_handles')) { # not initialized yet?
-            $dependend = $self->_init_middleware_class($klass, $dependend);
-        } else {
-            $dependend->{$klass}->{outer} = [ $klass->_outer_middlewares ];
-            $dependend->{$klass}->{inner} = [ $klass->_inner_middlewares ];
+        unless ($IS_INITIALIZED{$klass}++) {
+            $self->_init_middleware_class($klass);
         }
 
         my $instance = $klass->new(
@@ -153,16 +148,16 @@ sub _create_middleware_instance {
 
     push @{ $self->middlewares }, map { $_->[0] } @$args;
     $self->_instance_of(+{ %instances, %{ $self->_instance_of || {} } });
-
-    return $dependend;
 }
 
 # load one middleware 'class'
 sub _init_middleware_class {
-    my ($self, $klass, $dependend) = @_;
+    my ($self, $klass,) = @_;
 
     my @before_handles;
     my @after_handles;
+    my @outer_middlewares;
+    my @inner_middlewares;
 
     no warnings 'redefine';
 
@@ -177,38 +172,36 @@ sub _init_middleware_class {
         return unless $method_class;
 
         no strict 'refs';
-        *{"$klass\::$method"}         = $code;
+        *{"$klass\::$method"}        = $code;
         *{"$method_class\::$method"} = $code;
     };
-    local *outer_middleware = sub { push @{ $dependend->{$klass}->{outer} }, $_[0] };
-    local *inner_middleware = sub { push @{ $dependend->{$klass}->{inner} }, $_[0] };
+    local *outer_middleware = sub { push @outer_middlewares, $_[0] };
+    local *inner_middleware = sub { push @inner_middlewares, $_[0] };
 
     Any::Moose::load_class($klass);
 
     no strict 'refs';
-    *{"${klass}::_before_handles"}    = sub () { @before_handles };
-    *{"${klass}::_after_handles"}     = sub () { @after_handles };
-    *{"${klass}::_outer_middlewares"} = sub () { @{ $dependend->{$klass}->{outer} } };
-    *{"${klass}::_inner_middlewares"} = sub () { @{ $dependend->{$klass}->{inner} } };
-
-    $dependend;
+    *{"${klass}::_before_handles"}    = sub () { @before_handles    };
+    *{"${klass}::_after_handles"}     = sub () { @after_handles     };
+    *{"${klass}::_outer_middlewares"} = sub () { @outer_middlewares };
+    *{"${klass}::_inner_middlewares"} = sub () { @inner_middlewares };
 }
 
 # i want to remove this -- tokuhirom 20090403
 sub _check_deps_and_calc_sort_score {
-    my ($self, $dependend) = @_;
+    my ($self, ) = @_;
 
     # check dependency and sorting
     my $i = 0;
     my %sort = map { $_ => $i++ } @{ $self->middlewares };
-    while (my($from, $conf) = each %$dependend) {
-        for my $to (@{ $conf->{outer} }) {
+    for my $from (@{ $self->middlewares }) {
+        for my $to ($from->_outer_middlewares) {
             Carp::croak("'$from' need to '$to'") unless is_class_loaded($to);
-            $sort{$to} = $sort{$from} - 1;
+            $sort{$to} = $sort{$from} - 1; # minus 1
         }
-        for my $to (@{ $conf->{inner} }) {
+        for my $to ($from->_inner_middlewares) {
             Carp::croak("'$from' need to '$to'") unless is_class_loaded($to);
-            $sort{$to} = $sort{$from} + 1;
+            $sort{$to} = $sort{$from} + 1; # plus 1
         }
     }
 
