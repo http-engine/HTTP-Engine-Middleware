@@ -15,7 +15,7 @@ has 'middlewares' => (
 );
 
 has '_instance_of' => (
-    is      => 'ro',
+    is      => 'rw',
     isa     => 'HashRef',
     default => sub { +{} },
 );
@@ -97,8 +97,22 @@ BEGIN {
 sub install {
     my($self, @middlewares) = @_;
 
+    my $args = $self->_build_args(@middlewares);
+    my $dependend = $self->_create_middleware_instance($args);
+    my $scores = $self->_check_deps_and_calc_sort_score($dependend);
+    @{ $self->middlewares } = sort { $scores->{$a} <=> $scores->{$b} } keys %$scores;
+}
+
+# this module accepts
+#  $mw->install(qw/HTTP::Engine::Middleware::Foo/);
+# and
+#  $mw->install('HTTP::Engine::Middleware::Foo' => { arg1 => 'foo'});
+sub _build_args {
+    my $self = shift;
+
+    # TODO: need refactoring the code
     my %config;
-    for my $stuff (@middlewares) {
+    for my $stuff (@_) {
         if (ref($stuff) eq 'HASH') {
             my $mw_name = $self->middlewares->[-1]; # configuration for last one item
             $config{$mw_name} = $stuff;
@@ -109,12 +123,19 @@ sub install {
         }
     }
 
-    # load and create instance
-    my %dependend ;
-    while (my($name, $config) = each %config) {
+    return \%config;
+}
+
+# load & create middleware instance
+sub _create_middleware_instance {
+    my ($self, $args) = @_;
+
+    my %instances;
+    my %dependend;
+    while (my($name, $config) = each %$args) {
         $dependend{$name} = { outer => [], inner => [] };
 
-        unless ($name->can('before_handles')) {
+        unless ($name->can('before_handles')) { # what's this mean?
             # init declear
             my @before_handles;
             my @after_handles;
@@ -154,22 +175,33 @@ sub install {
         @{ $instance->before_handles } = $name->_before_handles;
         @{ $instance->after_handles }  = $name->_after_handles;
 
-        $self->_instance_of->{$name} = $instance;
+        $instances{$name} = $instance;
     }
+
+    $self->_instance_of(+{ %instances, %{ $self->_instance_of || {} } });
+
+    return \%dependend;
+}
+
+# i want to remove this -- tokuhirom 20090403
+sub _check_deps_and_calc_sort_score {
+    my ($self, $dependend) = @_;
+
     # check dependency and sorting
     my $i = 0;
     my %sort = map { $_ => $i++ } @{ $self->middlewares };
-    while (my($from, $conf) = each %dependend) {
+    while (my($from, $conf) = each %$dependend) {
         for my $to (@{ $conf->{outer} }) {
-            Carp::croak "'$from' need to '$to'" unless is_class_loaded($to);
+            Carp::croak("'$from' need to '$to'") unless is_class_loaded($to);
             $sort{$to} = $sort{$from} - 1;
         }
         for my $to (@{ $conf->{inner} }) {
-            Carp::croak "'$from' need to '$to'" unless is_class_loaded($to);
+            Carp::croak("'$from' need to '$to'") unless is_class_loaded($to);
             $sort{$to} = $sort{$from} + 1;
         }
     }
-    @{ $self->middlewares } = sort { $sort{$a} <=> $sort{$b} } keys %sort;
+
+    return \%sort;
 }
 
 sub is_class_loaded {
