@@ -20,6 +20,12 @@ has '_instance_of' => (
     default => sub { +{} },
 );
 
+has '_instance_ary_ex' => (
+    is      => 'rw',
+    isa     => 'ArrayRef',
+    default => sub { +[] },
+);
+
 has 'method_class' => (
     is      => 'ro',
     isa     => 'Str',
@@ -68,8 +74,6 @@ sub import {
     *{"$caller\::before_handle"}     = sub (&) { goto \&before_handle     };
     *{"$caller\::after_handle"}      = sub (&) { goto \&after_handle      };
     *{"$caller\::middleware_method"} = sub     { goto \&middleware_method };
-    *{"$caller\::outer_middleware"}  = sub ($) { goto \&outer_middleware  };
-    *{"$caller\::inner_middleware"}  = sub ($) { goto \&inner_middleware  };
 }
 
 sub __MIDDLEWARE__ {
@@ -85,7 +89,7 @@ sub __MIDDLEWARE__ {
 BEGIN {
     no strict 'refs';
     for my $meth (
-        qw(before_handle after_handle middleware_method outer_middleware inner_middleware)
+        qw(before_handle after_handle middleware_method)
       )
     {
         *{__PACKAGE__ . "::$meth"} = sub {
@@ -99,8 +103,7 @@ sub install {
 
     my $args = $self->_build_args(@middlewares);
     $self->_create_middleware_instance($args);
-    my $scores = $self->_check_deps_and_calc_sort_score();
-    @{ $self->middlewares } = sort { $scores->{$a} <=> $scores->{$b} } keys %$scores;
+    @{ $self->middlewares }; # why return this? just a backward compat? -- tokuhirom 20090403
 }
 
 # this module accepts
@@ -143,11 +146,11 @@ sub _create_middleware_instance {
             before_handles => [$klass->_before_handles()],
             after_handles  => [$klass->_after_handles() ],
         );
-        $instances{$klass} = $instance;
-    }
 
-    push @{ $self->middlewares }, map { $_->[0] } @$args;
-    $self->_instance_of(+{ %instances, %{ $self->_instance_of || {} } });
+        push @{ $self->_instance_ary_ex }, $instance;
+        push @{ $self->middlewares }, $klass;
+        push @{ $self->_instance_of->{$klass} }, $instance;
+    }
 }
 
 # load one middleware 'class'
@@ -156,8 +159,6 @@ sub _init_middleware_class {
 
     my @before_handles;
     my @after_handles;
-    my @outer_middlewares;
-    my @inner_middlewares;
 
     no warnings 'redefine';
 
@@ -175,37 +176,12 @@ sub _init_middleware_class {
         *{"$klass\::$method"}        = $code;
         *{"$method_class\::$method"} = $code;
     };
-    local *outer_middleware = sub { push @outer_middlewares, $_[0] };
-    local *inner_middleware = sub { push @inner_middlewares, $_[0] };
 
     Any::Moose::load_class($klass);
 
     no strict 'refs';
     *{"${klass}::_before_handles"}    = sub () { @before_handles    };
     *{"${klass}::_after_handles"}     = sub () { @after_handles     };
-    *{"${klass}::_outer_middlewares"} = sub () { @outer_middlewares };
-    *{"${klass}::_inner_middlewares"} = sub () { @inner_middlewares };
-}
-
-# i want to remove this -- tokuhirom 20090403
-sub _check_deps_and_calc_sort_score {
-    my ($self, ) = @_;
-
-    # check dependency and sorting
-    my $i = 0;
-    my %sort = map { $_ => $i++ } @{ $self->middlewares };
-    for my $from (@{ $self->middlewares }) {
-        for my $to ($from->_outer_middlewares) {
-            Carp::croak("'$from' need to '$to'") unless is_class_loaded($to);
-            $sort{$to} = $sort{$from} - 1; # minus 1
-        }
-        for my $to ($from->_inner_middlewares) {
-            Carp::croak("'$from' need to '$to'") unless is_class_loaded($to);
-            $sort{$to} = $sort{$from} + 1; # plus 1
-        }
-    }
-
-    return \%sort;
 }
 
 sub is_class_loaded {
@@ -215,7 +191,8 @@ sub is_class_loaded {
 
 sub instance_of {
     my($self, $name) = @_;
-    $self->_instance_of->{$name};
+    my $stuff = $self->_instance_of->{$name};
+    return wantarray ? @{$stuff} : $stuff->[0];
 }
 
 sub handler {
@@ -227,8 +204,7 @@ sub handler {
         my $res;
         my @run_middlewares;
     LOOP:
-        for my $middleware (@{ $self->middlewares }) {
-            my $instance = $self->_instance_of->{$middleware};
+        for my $instance (@{ $self->_instance_ary_ex }) {
             for my $code (@{ $instance->before_handles }) {
                 my $ret = $code->($self, $instance, $req);
                 if ($ret->isa('HTTP::Engine::Response')) {
