@@ -131,23 +131,23 @@ sub _create_middleware_instance {
     my %instances;
     my $dependend;
     for my $stuff (@$args) {
-        my $name   = $stuff->[0];
+        my $klass  = $stuff->[0];
         my $config = $stuff->[1];
 
-        $dependend->{$name} = { outer => [], inner => [] };
+        $dependend->{$klass} = { outer => [], inner => [] };
 
-        if (! $name->can('before_handles')) { # not initialized yet?
-            $dependend = $self->_init_middleware_class($name, $dependend);
+        if (! $klass->can('before_handles')) { # not initialized yet?
+            $dependend = $self->_init_middleware_class($klass, $dependend);
         } else {
-            $dependend->{$name}->{outer} = [ $name->_outer_middlewares ];
-            $dependend->{$name}->{inner} = [ $name->_inner_middlewares ];
+            $dependend->{$klass}->{outer} = [ $klass->_outer_middlewares ];
+            $dependend->{$klass}->{inner} = [ $klass->_inner_middlewares ];
         }
 
-        my $instance = $name->new($config);
-        @{ $instance->before_handles } = $name->_before_handles;
-        @{ $instance->after_handles }  = $name->_after_handles;
+        my $instance = $klass->new($config);
+        @{ $instance->before_handles } = $klass->_before_handles;
+        @{ $instance->after_handles }  = $klass->_after_handles;
 
-        $instances{$name} = $instance;
+        $instances{$klass} = $instance;
     }
 
     push @{ $self->middlewares }, map { $_->[0] } @$args;
