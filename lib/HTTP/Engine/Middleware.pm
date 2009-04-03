@@ -110,20 +110,18 @@ sub install {
 sub _build_args {
     my $self = shift;
 
-    # TODO: need refactoring the code
-    my %config;
-    for my $stuff (@_) {
-        if (ref($stuff) eq 'HASH') {
-            my $mw_name = $self->middlewares->[-1]; # configuration for last one item
-            $config{$mw_name} = $stuff;
+    # basis of Data::OptList
+    my @middlewares;
+    my $max = scalar(@_);
+    for (my $i = 0; $i < $max ; $i++) {
+        if ($i + 1 < $max && ref($_[$i + 1])) {
+            push @middlewares, [ $_[$i++] => $_[$i] ];
         } else {
-            my $mw_name = $stuff;
-            push @{ $self->middlewares }, $mw_name;
-            $config{$mw_name} = +{ };
+            push @middlewares, [ $_[$i] => {} ];
         }
     }
 
-    return \%config;
+    return \@middlewares;
 }
 
 # load & create middleware instance
@@ -132,7 +130,10 @@ sub _create_middleware_instance {
 
     my %instances;
     my %dependend;
-    while (my($name, $config) = each %$args) {
+    for my $stuff (@$args) {
+        my $name   = $stuff->[0];
+        my $config = $stuff->[1];
+
         $dependend{$name} = { outer => [], inner => [] };
 
         unless ($name->can('before_handles')) { # what's this mean?
@@ -178,6 +179,7 @@ sub _create_middleware_instance {
         $instances{$name} = $instance;
     }
 
+    push @{ $self->middlewares }, map { $_->[0] } @$args;
     $self->_instance_of(+{ %instances, %{ $self->_instance_of || {} } });
 
     return \%dependend;
