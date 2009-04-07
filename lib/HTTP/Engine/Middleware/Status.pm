@@ -96,6 +96,8 @@ HTML
 
 __MIDDLEWARE__
 
+__END__
+
 =head1 NAME
 
 HTTP::Engine::Middleware::Status - server status manager
