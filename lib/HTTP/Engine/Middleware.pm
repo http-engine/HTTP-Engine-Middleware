@@ -98,12 +98,12 @@ BEGIN {
     }
 };
 
+# this method's return value is indefinite.
 sub install {
     my($self, @middlewares) = @_;
 
     my $args = $self->_build_args(@middlewares);
     $self->_create_middleware_instance($args);
-    @{ $self->middlewares }; # why return this? just a backward compat? -- tokuhirom 20090403
 }
 
 # this module accepts
