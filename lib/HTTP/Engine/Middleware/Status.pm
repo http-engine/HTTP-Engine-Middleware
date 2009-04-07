@@ -94,10 +94,41 @@ HTML
     HTTP::Engine::Response->new( body => $html );;
 };
 
-
-#after_handle {
-#    my($c, $self, $req, $res) = @_;
-#    $self->run_hook('after');
-#};
-
 __MIDDLEWARE__
+
+=head1 NAME
+
+HTTP::Engine::Middleware::Status - server status manager
+
+=head1 SYNOPSIS
+
+    my $mw = HTTP::Engine::Middleware->new;
+    $mw->install( 'HTTP::Engine::Middleware::Status' => {
+        launch_at => '/hem-server-status',
+        plugins   => [
+            'Memory', # use HTTP::Engine::Middleware::Status::Memory
+        ],
+    });
+    HTTP::Engine->new(
+        interface => {
+            module => 'YourFavoriteInterfaceHere',
+            request_handler => $mw->handler( \&handler ),
+        }
+    )->run();
+
+    # $ GET http//localhost/hem-server-status
+    # to get the status contents
+
+=head1 DESCRIPTION
+
+this module is given server status contents like Apache's mod_status.c to HTTP::Engine.
+
+=head1 SEE ALSO
+
+L<HTTP::Engine::Middleware::Status::Memory>
+
+=head1 AUTHORS
+
+Kazuhiro Osawa
+
+=cut

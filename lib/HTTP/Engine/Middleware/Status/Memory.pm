@@ -31,3 +31,32 @@ sub render {
 __PACKAGE__->meta->make_immutable;
 1;
 
+=head1 NAME
+
+HTTP::Engine::Middleware::Status::Memory - Memory Status Plugin
+
+=head1 SYNOPSIS
+
+    my $mw = HTTP::Engine::Middleware->new;
+    $mw->install( 'HTTP::Engine::Middleware::Status' => {
+        plugins   => [
+            'Memory', # use HTTP::Engine::Middleware::Status::Memory
+        ],
+    });
+
+=head1 DESCRIPTION
+
+this pluin displays the used memory size which by the modules.
+
+=head1 SEE ALSO
+
+L<HTTP::Engine::Middleware::Status>,
+L<B::TerseSize>,
+L<Devel::Symdump>
+
+
+=head1 AUTHORS
+
+Kazuhiro Osawa
+
+=cut
