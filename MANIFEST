@@ -8,6 +8,7 @@ inc/Module/Install/Fetch.pm
 inc/Module/Install/Include.pm
 inc/Module/Install/Makefile.pm
 inc/Module/Install/Metadata.pm
+inc/Module/Install/Repository.pm
 inc/Module/Install/TestBase.pm
 inc/Module/Install/Win32.pm
 inc/Module/Install/WriteAll.pm
@@ -35,12 +36,14 @@ lib/HTTP/Engine/Middleware/ReverseProxy.pm
 lib/HTTP/Engine/Middleware/Role.pm
 lib/HTTP/Engine/Middleware/Role/Logger.pm
 lib/HTTP/Engine/Middleware/Static.pm
+lib/HTTP/Engine/Middleware/Status.pm
+lib/HTTP/Engine/Middleware/Status/Base.pm
+lib/HTTP/Engine/Middleware/Status/Memory.pm
 Makefile.PL
 MANIFEST			This list of files
 META.yml
 README
 t/00_compile.t
-t/100_core/dependency.t
 t/100_core/install_middleware.t
 t/100_core/method_injection.t
 t/100_core/skip_response.t
@@ -58,6 +61,8 @@ t/200_middlewares/profile-runtime.t
 t/200_middlewares/profile.t
 t/200_middlewares/reverseproxy.t
 t/200_middlewares/static.t
+t/200_middlewares/status-memory.t
+t/200_middlewares/status.t
 t/htdocs/css/mobile.css
 t/htdocs/index.html
 t/htdocs/manual/index.html

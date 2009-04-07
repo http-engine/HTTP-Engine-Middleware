@@ -47,6 +47,12 @@ features(
         recommends_hack('Text::SimpleTable'),
     ],
 
+    'Status::Memory' => [
+        -default => 0,
+        recommends_hack('B::TerseSize'),
+        recommends_hack('Devel::Symdump'),
+    ],
+
 # static file maneger ( developer ? )
 
     'Static' => [
