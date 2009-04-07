@@ -50,12 +50,14 @@ run {
     );
 
     my $mw = HTTP::Engine::Middleware->new;
-    ok $mw->install(@config), 'firast instance';
+    $mw->install(@config);
+    ok scalar(@{ $mw->middlewares }), 'firast instance';
 
     run_tests($block, $mw);
 
     my $mw2 = HTTP::Engine::Middleware->new;
-    ok $mw2->install(@config), 'create multi instance';
+    $mw2->install(@config);
+    ok scalar(@{ $mw2->middlewares }), 'create multi instance';
 
     run_tests($block, $mw2);
 
@@ -68,7 +70,8 @@ run {
     );
 
     my $mw3 = HTTP::Engine::Middleware->new;
-    ok $mw3->install(@config2), 'firast instance';
+    $mw3->install(@config2);
+    ok scalar(@{ $mw3->middlewares }), 'firast instance';
 
     run_tests($block, $mw3);
 };
