@@ -46,12 +46,13 @@ after_handle {
     if ($self->err_info) {
         $res = HTTP::Engine::Response->new;
         $res->code(500);
-        $res->body(
-            $self->err_info->as_html(
-                powered_by => $self->powerd_by,
-                ($self->renderer ? (renderer => $self->renderer) : ())
-            )
+
+        my $body = $self->err_info->as_html(
+            powered_by => $self->powerd_by,
+            ($self->renderer ? (renderer => $self->renderer) : ())
         );
+        utf8::downgrade($body) if utf8::is_utf8($body);
+        $res->body($body);
     }
 
     $res;
