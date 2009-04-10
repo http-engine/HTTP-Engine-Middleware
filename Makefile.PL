@@ -59,7 +59,7 @@ features(
         -default => 0,
         recommends_hack('MIME::Types'),
         recommends_hack('Path::Class'),
-        recommends_hack('MouseX::Types::Path::Class'),
+        recommends_hack('MouseX::Types::Path::Class' => '0.05'),
     ],
 
 # fill in form
@@ -73,6 +73,7 @@ features(
 
     'Encode' => [
         -default => 0,
+        recommends_hack('Data::Visitor' => '0.23'),
         recommends_hack('Data::Visitor::Encode'),
         recommends_hack('Encode'),
     ],
