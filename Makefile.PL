@@ -23,8 +23,8 @@ name 'HTTP-Engine-Middleware';
 all_from 'lib/HTTP/Engine/Middleware.pm';
 
 requires 'Any::Moose'   => '0.06';
-requires 'Mouse'        => '0.17';
-requires 'HTTP::Engine' => '0.1.4';
+requires 'Mouse'        => '0.20';
+requires 'HTTP::Engine' => '0.1.6';
 requires 'HTTP::Request';
 
 features(
