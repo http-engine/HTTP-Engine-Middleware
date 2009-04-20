@@ -16,9 +16,9 @@ after_handle {
 
     my $msg = $self->format;
 
-    $msg =~ s/\%\{([\w-]+)\}i/$req->header($1) || '-'/ge;                   # %{User-Agent}
+    $msg =~ s/\%\{([\w-]+)\}i/$req->header($1) || '-'/ge;                  # %{User-Agent}
     $msg =~ s/\%(?:[><])?([a-z])/handle_char($req, $res, $1) || '-'/ge;    # %r
-    $msg =~ s/\%\%/%/g;                                           # %%
+    $msg =~ s/\%\%/%/g;                                                    # %%
 
     $self->log($msg);
 
