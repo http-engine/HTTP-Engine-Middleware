@@ -16,6 +16,8 @@ use HTTP::Engine::Response;
 use HTTP::Request;
 
 {
+    tie *STDERR, 'IO::Scalar', \my $err;
+
     my $mw = HTTP::Engine::Middleware->new;
     $mw->install( 'HTTP::Engine::Middleware::DebugScreen', { powerd_by => 'HE::Middleware test' } );
     my $res = HTTP::Engine->new(
@@ -27,6 +29,8 @@ use HTTP::Request;
         },
     )->run( HTTP::Request->new( GET => 'http://localhost/') );
     my $out = $res->content;
+
+    untie *STDERR;
 
     is $res->code, '500';
     like $out, qr/ERROR TEST HE/;
