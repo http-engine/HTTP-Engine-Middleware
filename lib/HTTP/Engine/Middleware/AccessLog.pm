@@ -89,6 +89,10 @@ This middleware prints access log like apache.
 This module's log format string is a subset of Apache.
 If you want to use more syntax, patches welcome :)
 
+=head1 BUG
+
+%r should contains query string.
+
 =head1 AUTHOR
 
 Tokuhiro Matsuno
