@@ -38,8 +38,10 @@ sub override_request_method {
     my $overload = $req->param( $self->METHOD_OVERRIDE_PARAM_KEY )
         || $req->header( $self->HTTP_METHOD_OVERRIDE_HEADER );
 
-    if ( ($overload && grep { $_ eq $overload } @{ $self->HTTP_METHODS } ) != 0 ) {
-        $req->method( uc $overload );
+    if ($overload) {
+        if ( (grep { $_ eq $overload } @{ $self->HTTP_METHODS } ) != 0 ) {
+            $req->method( uc $overload );
+        }
     }
     $req;
 }
