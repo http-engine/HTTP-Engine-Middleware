@@ -42,7 +42,7 @@ sub handle_char {
             $dt->strftime("[%d/%b/%y:%H:%M:%S %z]");
         },
         'r' => sub {
-            join ' ', $req->method, $req->uri->path, ($req->protocol||'HTTP/1.0'); # ?
+            join ' ', $req->method, $req->uri->path_query, ($req->protocol||'HTTP/1.0'); # ?
         },
         'b' => sub {
             $res->content_length || '-'; # size of response in bytes, excluding HTTP headers
