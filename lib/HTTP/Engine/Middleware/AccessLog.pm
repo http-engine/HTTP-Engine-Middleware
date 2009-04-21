@@ -14,13 +14,15 @@ has format => (
 after_handle {
     my ( $c, $self, $req, $res ) = @_;
 
-    my $msg = $self->format;
+    if ($res) {
+        my $msg = $self->format;
 
-    $msg =~ s/\%\{([\w-]+)\}i/$req->header($1) || '-'/ge;                  # %{User-Agent}
-    $msg =~ s/\%(?:[><])?([a-z])/handle_char($req, $res, $1) || '-'/ge;    # %r
-    $msg =~ s/\%\%/%/g;                                                    # %%
+        $msg =~ s/\%\{([\w-]+)\}i/$req->header($1) || '-'/ge;                  # %{User-Agent}
+        $msg =~ s/\%(?:[><])?([a-z])/handle_char($req, $res, $1) || '-'/ge;    # %r
+        $msg =~ s/\%\%/%/g;                                                    # %%
 
-    $self->log($msg);
+        $self->log($msg);
+    }
 
     return $res;
 };
