@@ -16,7 +16,7 @@ $mw->install(
     'HTTP::Engine::Middleware::AccessLog',
     {   logger => sub {
             my ( $message ) = @_;
-            ::like $message, qr{127.0.0.1 - - \[\d\d/\w+/\d\d:\d\d:\d\d:\d\d \+0000\] "GET /foo\?getparam=1 HTTP/1.0" 200 - "http://mixi.jp/" "internatoexplolerr"};
+            ::like $message, qr{127.0.0.1 - - \[\d\d/\w+/\d\d:\d\d:\d\d:\d\d \+0000\] "GET /foo\?getparam=1 HTTP/1.0" 200 - "http://example.com/" "internatoexplolerr"};
         }
     }
 );
@@ -24,7 +24,7 @@ $mw->install(
 my $request
     = HTTP::Request->new( 'GET' => 'http://localhost/foo?getparam=1', HTTP::Headers->new(
         'User-Agent' => 'internatoexplolerr',
-        Referer => 'http://mixi.jp/',
+        Referer => 'http://example.com/',
         'Content-Length' => 0,
         'content-type' => 'text/plain',
     ));
