@@ -53,6 +53,11 @@ features(
         recommends_hack('Devel::Symdump'),
     ],
 
+    'AccessLog' => [
+        -default => 0,
+        recommends_hack('DateTime'),
+    ],
+
 # static file maneger ( developer ? )
 
     'Static' => [
