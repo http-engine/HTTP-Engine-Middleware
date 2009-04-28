@@ -10,7 +10,6 @@ use HTTP::Engine::Middleware;
 use HTTP::Engine::Response;
 use HTTP::Request;
 use HTTP::Request::Common;
-use Time::Piece;
 
 my $mw = HTTP::Engine::Middleware->new;
 $mw->install(
