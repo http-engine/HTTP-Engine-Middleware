@@ -8,7 +8,7 @@ with 'HTTP::Engine::Middleware::Role::Logger';
 has format => (
     is      => 'ro',
     isa     => 'Str',
-    default => '%h %l %u %t "%r" %>s %b "%{Referer}i" "%{User-agent}i"',
+    default => '%h %l %u %t "%r" %>s %b "%{Referer}i" "%{User-Agent}i"',
 );
 
 after_handle {
@@ -75,7 +75,7 @@ HTTP::Engine::Middleware::AccessLog - write access log
         logger => sub {
             warn @_; # your own callback routine
         },
-        format => '%h %l %u %t "%r" %>s %b "%{Referer}i" "%{User-agent}i"',
+        format => '%h %l %u %t "%r" %>s %b "%{Referer}i" "%{User-Agent}i"',
     });
     HTTP::Engine->new(
         interface => {
