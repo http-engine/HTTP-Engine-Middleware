@@ -20,6 +20,7 @@ inc/Test/Builder/Module.pm
 inc/Test/More.pm
 inc/YAML.pm
 lib/HTTP/Engine/Middleware.pm
+lib/HTTP/Engine/Middleware/AccessLog.pm
 lib/HTTP/Engine/Middleware/DebugRequest.pm
 lib/HTTP/Engine/Middleware/DebugScreen.pm
 lib/HTTP/Engine/Middleware/DoCoMoGUID.pm
@@ -39,6 +40,7 @@ lib/HTTP/Engine/Middleware/Static.pm
 lib/HTTP/Engine/Middleware/Status.pm
 lib/HTTP/Engine/Middleware/Status/Base.pm
 lib/HTTP/Engine/Middleware/Status/Memory.pm
+lib/HTTP/Engine/Middleware/UploadTemp.pm
 Makefile.PL
 MANIFEST			This list of files
 META.yml
@@ -49,6 +51,7 @@ t/100_core/method_injection.t
 t/100_core/skip_response.t
 t/100_core/use.t
 t/100_core/wrap.t
+t/200_middlewares/accesslog.t
 t/200_middlewares/debugrequest.t
 t/200_middlewares/debugscreen.t
 t/200_middlewares/docomo_guid.t
@@ -63,6 +66,16 @@ t/200_middlewares/reverseproxy.t
 t/200_middlewares/static.t
 t/200_middlewares/status-memory.t
 t/200_middlewares/status.t
+t/200_middlewares/uploadtemp/base.pm
+t/200_middlewares/uploadtemp/base_dir.t
+t/200_middlewares/uploadtemp/cleanup.t
+t/200_middlewares/uploadtemp/default.t
+t/200_middlewares/uploadtemp/keepalive.t
+t/200_middlewares/uploadtemp/keepalive_off.t
+t/200_middlewares/uploadtemp/lazy.t
+t/200_middlewares/uploadtemp/template.t
+t/200_middlewares/uploadtemp/tmpdir.t
+t/200_middlewares/uploadtemp/tmpdir_template.t
 t/htdocs/css/mobile.css
 t/htdocs/index.html
 t/htdocs/manual/index.html

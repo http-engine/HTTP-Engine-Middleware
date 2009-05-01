@@ -1,5 +1,9 @@
 Revision history for Perl extension HTTP::Engine::Middleware
 
+0.12    2009-05-01T17:57:20+09:00
+        - add Middleware::AccessLog  # tokuhirom++
+        - add Middleware::UploadTemp # upload files cleanup manager
+
 0.11    2009-04-10T19:03:24+09:00
         - DebugScreen: utf8 downgread to response body
 

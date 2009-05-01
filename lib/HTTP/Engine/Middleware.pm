@@ -4,7 +4,7 @@ use Any::Moose;
 use Any::Moose (
     '::Util' => [qw/apply_all_roles/],
 );
-our $VERSION = '0.11';
+our $VERSION = '0.12';
 
 use Carp ();
 
