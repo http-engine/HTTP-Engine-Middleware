@@ -111,7 +111,7 @@ __END__
 
 =head1 NAME
 
-HTTP::Engine::Middleware::HTTPSession - session support at middleware layer
+HTTP::Engine::Middleware::UploadTemp - temporary directory management at middleware layer
 
 =head1 SYNOPSIS
 
