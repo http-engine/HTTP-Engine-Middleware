@@ -135,6 +135,8 @@ HTTP::Engine::Middleware::HTTPSession - session support at middleware layer
 
 This middleware add the management of temporary directory for upload files.
 
+Another reason is that L<HTTP::Body::MultiPart> does not clean up to temporary files.
+
 =head1 AUTHOR
 
 Kazuhiro Osawa
