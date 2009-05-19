@@ -1,6 +1,7 @@
 use strict;
 use warnings;
 use Test::More;
+use IO::Scalar;
 
 eval q{ use HTTP::Session; };
 plan skip_all => "HTTP::Session is not installed" if $@;
@@ -9,7 +10,7 @@ plan skip_all => "HTTP::Session::State::URI is not loaded: $@" if $@;
 eval q( { package foo; use Any::Moose;use Any::Moose 'X::Types' } );
 plan skip_all => "Mo[ou]seX::Types is not installed" if $@;
 
-plan tests => 8;
+plan tests => 10;
 
 use HTTP::Engine;
 use HTTP::Engine::Middleware;
@@ -43,6 +44,16 @@ sub run_engine (&) {
             request_handler => $mw->handler( $code ),
         },
     )->run($request);
+
+    tie *STDERR, 'IO::Scalar', \my $err;
+    my $response = HTTP::Engine->new(
+        interface => {
+            module          => 'Test',
+            request_handler => $mw->handler(sub {}),
+        },
+    )->run( HTTP::Request->new( GET => '/' ) );
+    untie *STDERR;
+    like $err, qr/You should return instance of HTTP::Engine::Response./, 'You should return instance of HTTP::Engine::Response.';
 
     return $res;
 }

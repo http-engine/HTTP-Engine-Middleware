@@ -73,7 +73,7 @@ has 'store' => (
 
     after_handle {
         my ($c, $self, $req, $res) = @_;
-        if ($SESSION) {
+        if ($SESSION && $res) {
             $SESSION->response_filter($res);
             $SESSION->finalize();
         }
