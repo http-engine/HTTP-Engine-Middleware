@@ -56,6 +56,6 @@ use HTTP::Request;
     untie *STDERR;
 
     is $res->code, '500';
-    is $out, 'internal server errror';
+    is $out, 'internal server error';
     is $err, "ERROR TEST HE\n";
 }
