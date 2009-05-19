@@ -1,11 +1,12 @@
 use strict;
 use warnings;
 use Test::Base;
+use IO::Scalar;
 
 eval q{ use Data::Visitor::Encode };
 plan skip_all => "Data::Visitor::Encode is not installed" if $@;
 
-plan tests => 4 * blocks;
+plan tests => 5 * blocks;
 
 use HTTP::Engine;
 use HTTP::Engine::Middleware;
@@ -46,6 +47,16 @@ run {
     ok !Encode::is_utf8( $content ), 'not utf8';
     $content = encode('utf8', decode($config->{encode}, $content)) if $config->{encode};
     is $content, 'OKです!', 'content';
+
+    tie *STDERR, 'IO::Scalar', \my $err;
+    $response = HTTP::Engine->new(
+        interface => {
+            module          => 'Test',
+            request_handler => $mw->handler(sub {}),
+        },
+    )->run( HTTP::Request->new( GET => '/' ) );
+    untie *STDERR;
+    like $err, qr/You should return instance of HTTP::Engine::Response./, 'You should return instance of HTTP::Engine::Response.';
 };
 
 __END__

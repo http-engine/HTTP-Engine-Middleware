@@ -46,6 +46,7 @@ before_handle {
 
 after_handle {
     my ( $c, $self, $req, $res ) = @_;
+    return unless $res;
 
     my $body = $res->body;
     return $res unless $body;
