@@ -6,7 +6,7 @@ use HTML::StickyQuery;
 after_handle {
     my ( $c, $self, $req, $res ) = @_;
 
-    if (   $res->status == 200
+    if ( $res && $res->status == 200
         && $res->content_type =~ /html/
         && not Scalar::Util::blessed $res->body
         && $res->body )

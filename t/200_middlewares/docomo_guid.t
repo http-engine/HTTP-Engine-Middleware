@@ -1,11 +1,12 @@
 use strict;
 use warnings;
 use Test::Base;
+use IO::Scalar;
 
 eval q{ use HTML::StickyQuery };
 plan skip_all => "HTML::StickyQuery is not installed" if $@;
 
-plan tests => 1 * blocks;
+plan tests => 2 * blocks;
 
 use HTTP::Engine;
 use HTTP::Engine::Middleware;
@@ -36,6 +37,16 @@ run {
     )->run( HTTP::Request->new( GET => '/' ) );
 
     is $response->content, $block->expected;
+
+    tie *STDERR, 'IO::Scalar', \my $err;
+    $response = HTTP::Engine->new(
+        interface => {
+            module          => 'Test',
+            request_handler => $mw->handler(sub {}),
+        },
+    )->run( HTTP::Request->new( GET => '/' ) );
+    untie *STDERR;
+    like $err, qr/You should return instance of HTTP::Engine::Response./, 'You should return instance of HTTP::Engine::Response.';
 };
 
 __END__
