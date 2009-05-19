@@ -31,7 +31,7 @@ sub report {
     my $message = "Request handling execution time: $elapsed secs\n";
     $profile->log( $message );
 
-    return unless $self->send_header;
+    return unless $res && $self->send_header;
     $res->header( $self->header_name => $elapsed );
 }
 
