@@ -2,7 +2,7 @@ use strict;
 use warnings;
 use Test::More;
 
-if (Any::Moose::is_moose_loaded() && $Class::MOP::VERSION < 0.79) {
+if (Any::Moose::moose_is_preferred() && $Class::MOP::VERSION < 0.79) {
     plan skip_all => 'This test case does not worked by Class::MOP under 0.79 (Class::MOP::is_class_loaded method problem by XS code)';
 }
 
