@@ -17,6 +17,7 @@ middleware_method 'HTTP::Engine::Response::fillin_form' => sub {
 
 after_handle {
     my ( $c, $self, $req, $res ) = @_;
+    return unless $res;
 
     if ($res->{__PACKAGE__ . '::flag'} || ($self->autorun_on_post && $req->method eq 'POST')) {
         my $fdat = $res->{__PACKAGE__ . '::fdat'} || $req;

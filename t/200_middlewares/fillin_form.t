@@ -1,11 +1,12 @@
 use strict;
 use warnings;
 use Test::Base;
+use IO::Scalar;
 
 eval q{ use HTML::FillInForm 2.00 };
 plan skip_all => "HTML::FillInForm 2.00 required is FillInForm" if $@;
 
-plan tests => 1 * blocks;
+plan tests => 2 * blocks;
 
 use HTTP::Engine;
 use HTTP::Engine::Middleware;
@@ -40,6 +41,16 @@ run {
         },
     )->run($req);
     is $res->content, $block->expected;
+
+    tie *STDERR, 'IO::Scalar', \my $err;
+    my $response = HTTP::Engine->new(
+        interface => {
+            module          => 'Test',
+            request_handler => $mw->handler(sub {}),
+        },
+    )->run( HTTP::Request->new( GET => '/' ) );
+    untie *STDERR;
+    like $err, qr/You should return instance of HTTP::Engine::Response./, 'You should return instance of HTTP::Engine::Response.';
 };
 
 __END__
