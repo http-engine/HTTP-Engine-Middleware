@@ -115,6 +115,12 @@ __END__
 --- body: forbidden
 --- code: 403
 
+=== directory traversal real path
+--- uri: http://localhost/css/../../../Makefile.PL
+--- content_type: text/html
+--- body: forbidden
+--- code: 403
+
 === handle backend
 --- uri: http://localhost/css/dynamic-unknown.css
 --- content_type: text/html
