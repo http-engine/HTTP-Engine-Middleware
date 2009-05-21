@@ -43,7 +43,7 @@ before_handle {
 after_handle {
     my($c, $self, $req, $res) = @_;
 
-    if ($self->err_info) {
+    if ($self->err_info && $c->diecatch) {
         $res = HTTP::Engine::Response->new;
         $res->code(500);
 

@@ -31,6 +31,9 @@ has 'method_class' => (
     isa     => 'Str',
 );
 
+# this flag means...
+#   13:06  Yappo:> どっかの middleware が die を catch したので HEM core は die を rethrow しないよー
+#   13:06  Yappo:> って事すね
 has 'diecatch' => (
     is  => 'rw',
     isa => 'Bool',
@@ -219,7 +222,10 @@ sub handler {
         unless ($res) {
             $self->diecatch(0);
             local $@;
-            eval { $res = $handle->($req) };
+            eval {
+                $res = $handle->($req);
+                $self->diecatch(0); # yes! i'm still alive!
+            };
             $msg = $@ if !$self->diecatch && $@;
         }
         die $msg if $msg;
