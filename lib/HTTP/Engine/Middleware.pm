@@ -319,9 +319,11 @@ L<HTTP::Engine>
 
 =head1 REPOSITORY
 
-  svn co http://svn.coderepos.org/share/lang/perl/HTTP-Engine-Middleware/trunk HTTP-Engine-Middleware
+We moved to GitHub.
 
-HTTP::Engine::Middleware's Subversion repository is hosted at L<http://coderepos.org/share/>.
+  git clone git://github.com/http-engine/HTTP-Engine-Middleware.git
+
+HTTP::Engine::Middleware's Git repository is hosted at L<http://github.com/http-engine/HTTP-Engine-Middleware>.
 patches and collaborators are welcome.
 
 =head1 LICENSE
