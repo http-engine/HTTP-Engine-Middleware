@@ -64,6 +64,7 @@ t/200_middlewares/profile-runtime.t
 t/200_middlewares/profile.t
 t/200_middlewares/reverseproxy.t
 t/200_middlewares/static.t
+t/200_middlewares/static_404handler.t
 t/200_middlewares/status-memory.t
 t/200_middlewares/status.t
 t/200_middlewares/uploadtemp/base.pm
