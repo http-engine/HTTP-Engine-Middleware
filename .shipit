@@ -1,2 +1,2 @@
 steps = FindVersion, ChangeVersion, CheckChangeLog, DistTest, Commit, Tag, MakeDist, UploadCPAN
-svn.tagpattern = release-%v
+git.push_to = origin
