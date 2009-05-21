@@ -65,7 +65,7 @@ features(
         recommends_hack('MIME::Types'),
         recommends_hack('Path::Class'),
         recommends_hack('MouseX::Types::Path::Class' => '0.05'),
-        recommends_hack('HTTP::Date');
+        recommends_hack('HTTP::Date'),
     ],
 
 # fill in form
