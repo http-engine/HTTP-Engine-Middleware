@@ -8,6 +8,7 @@ use Cwd;
 use Any::Moose 'X::Types::Path::Class';
 use Any::Moose '::Util::TypeConstraints';
 use File::Spec::Unix;
+use HTTP::Date ();
 
 # corece of Regexp
 subtype 'HTTP::Engine::Middleware::Static::Regexp'
@@ -93,7 +94,7 @@ before_handle {
     my $res = HTTP::Engine::Response->new( body => $fh, content_type => $content_type );
     my $stat = $file->stat;
     $res->header( 'Content-Length' => $stat->size );
-    $res->header( 'Last-Modified'  => $stat->mtime );
+    $res->header( 'Last-Modified'  => HTTP::Date::time2str( $stat->mtime ) );
     $res;
 };
 

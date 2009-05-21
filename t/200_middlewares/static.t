@@ -10,11 +10,12 @@ plan skip_all => "Path::Class is not installed" if $@;
 eval q( { package foo; use Any::Moose;use Any::Moose 'X::Types::Path::Class' } );
 plan skip_all => "Mo[ou]seX::Types::Path::Class is not installed" if $@;
 
-plan tests => 12 * blocks;
+plan tests => 15 * blocks;
 
 use HTTP::Engine;
 use HTTP::Engine::Middleware;
 use HTTP::Engine::Response;
+use HTTP::Date ();
 use HTTP::Request;
 
 sub run_tests {
@@ -35,6 +36,12 @@ sub run_tests {
     is $response->content_type, $block->content_type, 'content type';
     my $body = $block->body;
     like $response->content, qr/$body/, 'body';
+
+    if ($block->last_modified) {
+        like(HTTP::Date::str2time($response->header('Last-Modified')), qr/\A[0-9]{9,10}\z/, 'send Last-Modified header');
+    } else {
+        ok(!$response->header('Last-Modified'), 'not send Last-Modified header');
+    }
 }
 
 run {
@@ -81,48 +88,56 @@ __END__
 
 === dynamic
 --- uri: http://localhost/
+--- last_modified: 0
 --- content_type: text/html
 --- body: dynamic
 --- code: 200
 
 === robots
 --- uri: http://localhost/robots.txt
+--- last_modified: 1
 --- content_type: text/plain
 --- body: robots.txt here
 --- code: 200
 
 === directory index
 --- uri: http://localhost/manual/
+--- last_modified: 1
 --- content_type: text/html
 --- body: index.html
 --- code: 200
 
 === css
 --- uri: http://localhost/css/mobile.css
+--- last_modified: 1
 --- content_type: text/css
 --- body: .mobile { display: none; }
 --- code: 200
 
 === not found
 --- uri: http://localhost/css/unknown.css
+--- last_modified: 0
 --- content_type: text/html
 --- body: not found
 --- code: 404
 
 === directory traversal
 --- uri: http://localhost/css/../../Makefile.PL
+--- last_modified: 0
 --- content_type: text/html
 --- body: forbidden
 --- code: 403
 
 === directory traversal real path
 --- uri: http://localhost/css/../../../Makefile.PL
+--- last_modified: 0
 --- content_type: text/html
 --- body: forbidden
 --- code: 403
 
 === handle backend
 --- uri: http://localhost/css/dynamic-unknown.css
+--- last_modified: 0
 --- content_type: text/html
 --- body: dynamic
 --- code: 200
