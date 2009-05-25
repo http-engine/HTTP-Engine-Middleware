@@ -81,7 +81,7 @@ before_handle {
 
     unless ($realpath && -e $file && !-d _) {
         return $req unless $self->is_404_handler;
-        return HTTP::Engine::Response->new( status => '404', body => 'not found' );
+        return HTTP::Engine::Response->new( status => 404, body => 'not found' );
     }
 
     my $content_type = 'text/plain';
