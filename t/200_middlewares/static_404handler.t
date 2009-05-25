@@ -112,3 +112,10 @@ __END__
 --- content_type: text/html
 --- body: dynamic
 --- code: 200
+
+=== directory doesn't exists
+--- uri: http://localhost/directory/does/not/exists
+--- content_type: text/html
+--- body: dynamic
+--- code: 200
+
