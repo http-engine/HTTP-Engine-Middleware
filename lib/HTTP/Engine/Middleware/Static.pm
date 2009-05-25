@@ -73,11 +73,13 @@ before_handle {
         }
     };
 
-    # check directory traversal
     my $realpath = Cwd::realpath($file->absolute->stringify);
-    return HTTP::Engine::Response->new( status => 403, body => 'forbidden') unless $docroot->subsumes($realpath);
+    if ($realpath) {
+        # check directory traversal if realpath found
+        return HTTP::Engine::Response->new( status => 403, body => 'forbidden') unless $docroot->subsumes($realpath);
+    }
 
-    unless (-e $file && !-d _) {
+    unless ($realpath && -e $file && !-d _) {
         return $req unless $self->is_404_handler;
         return HTTP::Engine::Response->new( status => '404', body => 'not found' );
     }
