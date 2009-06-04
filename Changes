@@ -1,5 +1,10 @@
 Revision history for Perl extension HTTP::Engine::Middleware
 
+0.14    2009-06-04T13:16:16+09:00
+        - Static: fixed a bug around is_404_handler:
+                  403 status returned when access came to the directory doesn't exist.
+                  It should be handled by 404 handler.
+
 0.13    2009-05-21T17:02:49+09:00
         - We moved to GitHub ( http://github.com/http-engine )
         - Static: add is_404_handler option
