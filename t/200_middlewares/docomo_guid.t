@@ -56,8 +56,15 @@ __END__
 <a href="/foo">bar</a>
 --- expected
 <a href="/foo?guid=ON">bar</a>
+
 ===
 --- input
 <a href="http://192.168.1.3/?page=1">&lt; 2008-05-18</a>
 --- expected
-<a href="http://192.168.1.3/?page=1&amp;guid=ON">&lt; 2008-05-18</a>
+<a href="http://192.168.1.3/?page=1">&lt; 2008-05-18</a>
+
+===
+--- input
+<form action="/foo">
+--- expected
+<form action="/foo"><input type="hidden" name="guid" value="ON" />

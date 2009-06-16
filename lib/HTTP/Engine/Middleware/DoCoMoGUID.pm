@@ -1,7 +1,7 @@
 package HTTP::Engine::Middleware::DoCoMoGUID;
 use HTTP::Engine::Middleware;
 use Scalar::Util ();
-use HTML::StickyQuery;
+use HTML::StickyQuery::DoCoMoGUID;
 
 after_handle {
     my ( $c, $self, $req, $res ) = @_;
@@ -14,13 +14,11 @@ after_handle {
         my $body = $res->body;
         $res->body(
             sub {
-                my $guid = HTML::StickyQuery->new( 'abs' => 1, );
+                my $guid = HTML::StickyQuery::DoCoMoGUID->new;
                 $guid->sticky(
                     scalarref => \$body,
-                    param     => { guid => 'ON' },
                 );
-                }
-                ->()
+            }-()
         );
     }
 
@@ -33,11 +31,11 @@ __END__
 
 =head1 NAME
 
-HTTP::Engine::Middleware::DoCoMoGUID - append guid=ON on each anchor tag
+HTTP::Engine::Middleware::DoCoMoGUID - append guid=ON on each anchor tag and form action
 
 =head1 SYNOPSIS
 
-This module appends ?guid=ON on each anchor tag.
+This module appends ?guid=ON on each anchor tag and form action
 This feature is needed by Japanese mobile web site developers.
 
 =head1 AUTHORS
@@ -45,6 +43,8 @@ This feature is needed by Japanese mobile web site developers.
 tokuhirom
 
 yappo
+
+nekokak
 
 =head1 SEE ALSO
 
