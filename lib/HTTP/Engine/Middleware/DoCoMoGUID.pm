@@ -13,12 +13,12 @@ after_handle {
     {
         my $body = $res->body;
         $res->body(
-            sub {
+            do {
                 my $guid = HTML::StickyQuery::DoCoMoGUID->new;
                 $guid->sticky(
                     scalarref => \$body,
                 );
-            }-()
+            }
         );
     }
 
