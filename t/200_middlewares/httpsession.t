@@ -9,6 +9,7 @@ eval q{ use HTTP::Session::State::URI; };
 plan skip_all => "HTTP::Session::State::URI is not loaded: $@" if $@;
 eval q( { package foo; use Any::Moose;use Any::Moose 'X::Types' } );
 plan skip_all => "Mo[ou]seX::Types is not installed" if $@;
+plan skip_all => "This test does not works with MooseX::Types<0.12" if $INC{'MooseX/Types.pm'} && $MooseX::Types::VERSION < 0.12;
 
 plan tests => 10;
 
