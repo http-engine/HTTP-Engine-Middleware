@@ -95,7 +95,7 @@ features(
 
     'DoCoMoGUID' => [
         -default => 0,
-        recommends_hack('HTML::StickyQuery'),
+        recommends_hack('HTML::StickyQuery::DoCoMoGUID'),
     ],
 
 # session support
