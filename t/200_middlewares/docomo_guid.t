@@ -3,8 +3,8 @@ use warnings;
 use Test::Base;
 use IO::Scalar;
 
-eval q{ use HTML::StickyQuery };
-plan skip_all => "HTML::StickyQuery is not installed" if $@;
+eval q{ use HTML::StickyQuery::DoCoMoGUID };
+plan skip_all => "HTML::StickyQuery::DoCoMoGUID is not installed" if $@;
 
 plan tests => 2 * blocks;
 
@@ -12,20 +12,27 @@ use HTTP::Engine;
 use HTTP::Engine::Middleware;
 use HTTP::Engine::Response;
 use HTTP::Request;
+use HTTP::MobileAttribute plugins => [qw/
+    IS
+/];
 
-filters( { expected => qw/ chomp /, } );
+filters( {
+    input    => qw/ yaml /,
+    expected => qw/ chomp /,
+} );
 
 run {
     my $block = shift;
 
-    my $mw = HTTP::Engine::Middleware->new;
-    $mw->install( 'HTTP::Engine::Middleware::DoCoMoGUID', );
+    my $mw = HTTP::Engine::Middleware->new({ method_class => 'HTTP::Engine::Request' });
+    $mw->install( 'HTTP::Engine::Middleware::DoCoMoGUID', 'HTTP::Engine::Middleware::MobileAttribute' );
 
     my $code = sub {
         my $req = shift;
+        $req->user_agent($block->input->{ua});
         HTTP::Engine::Response->new(
             content_type => 'text/html',
-            body         => $block->input,
+            body         => $block->input->{html},
         );
     };
 
@@ -53,18 +60,29 @@ __END__
 
 === 
 --- input
-<a href="/foo">bar</a>
+ua: DoCoMo/1.0/D501i
+html: <a href="/foo">bar</a>
 --- expected
 <a href="/foo?guid=ON">bar</a>
 
 ===
 --- input
-<a href="http://192.168.1.3/?page=1">&lt; 2008-05-18</a>
+ua: DoCoMo/1.0/D501i
+html: <a href="http://192.168.1.3/?page=1">&lt; 2008-05-18</a>
 --- expected
 <a href="http://192.168.1.3/?page=1">&lt; 2008-05-18</a>
 
 ===
 --- input
-<form action="/foo">
+ua: DoCoMo/1.0/D501i
+html: <form action="/foo">
 --- expected
 <form action="/foo"><input type="hidden" name="guid" value="ON" />
+
+=== 
+--- input
+ua: KDDI-SN31 UP.Browser/6.2.0.7.3.129 (GUI) MMP/2.0
+html: <a href="/foo">bar</a>
+--- expected
+<a href="/foo">bar</a>
+

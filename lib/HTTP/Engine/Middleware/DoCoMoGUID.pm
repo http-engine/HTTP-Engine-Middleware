@@ -8,7 +8,8 @@ after_handle {
 
     if ( $res && $res->status == 200
         && $res->content_type =~ /html/
-        && not Scalar::Util::blessed $res->body
+        && not( Scalar::Util::blessed( $res->body ) )
+        && $req->mobile_attribute->is_docomo
         && $res->body )
     {
         my $body = $res->body;
