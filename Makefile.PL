@@ -4,7 +4,9 @@ BEGIN
     if (!$ENV{SHIPIT} && eval {
         require Moose  && Moose->VERSION(
             '0.73'
-        ) && require MooseX::Types
+        ) && require MooseX::Types && MooseX::Types->VERSION(
+            '0.12'
+        )
     }) {
         *HAVE_MOOSE = sub { 1 };
     } else {
@@ -23,7 +25,7 @@ name 'HTTP-Engine-Middleware';
 all_from 'lib/HTTP/Engine/Middleware.pm';
 
 requires 'Any::Moose'   => '0.08';
-requires 'Mouse'        => '0.20';
+requires 'Mouse'        => '0.23';
 requires 'HTTP::Engine' => '0.1.8';
 requires 'HTTP::Request';
 
@@ -93,7 +95,7 @@ features(
 
     'DoCoMoGUID' => [
         -default => 0,
-        recommends_hack('HTML::StickyQuery'),
+        recommends_hack('HTML::StickyQuery::DoCoMoGUID'),
     ],
 
 # session support

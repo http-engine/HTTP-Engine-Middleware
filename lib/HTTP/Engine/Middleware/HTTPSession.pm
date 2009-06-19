@@ -2,18 +2,19 @@ package HTTP::Engine::Middleware::HTTPSession;
 use HTTP::Engine::Middleware;
 use Scalar::Util qw/blessed/;
 use Any::Moose 'X::Types' => [ -declare => [qw/State Store/] ];
+use Any::Moose 'X::Types::'.any_moose() => [ qw(CodeRef Object HashRef) ];
 use HTTP::Session;
 
 subtype State,
-    as 'CodeRef';
+    as CodeRef;
 coerce State,
-    from 'Object',
+    from Object,
         via {
             my $x = $_;
             sub { $x }
         };
 coerce State,
-    from 'HashRef',
+    from HashRef,
         via {
             my $klass = $_->{class};
             $klass = $klass =~ s/^\+// ? $klass : "HTTP::Session::State::${klass}";
@@ -23,15 +24,15 @@ coerce State,
         };
 
 subtype Store,
-    as 'CodeRef';
+    as CodeRef;
 coerce Store,
-    from 'Object',
+    from Object,
         via {
             my $x = $_;
             sub { $x }
         };
 coerce Store,
-    from 'HashRef',
+    from HashRef,
         via {
             my $klass = $_->{class};
             $klass = $klass =~ s/^\+// ? $klass : "HTTP::Session::Store::${klass}";

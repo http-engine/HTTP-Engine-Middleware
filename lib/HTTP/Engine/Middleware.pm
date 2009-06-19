@@ -61,11 +61,7 @@ sub import {
 
     init_class($caller);
 
-    if (Any::Moose::moose_is_preferred()) {
-        Moose->import({ into_level => 1 });
-    } else {
-        Mouse->export_to_level( 1 );
-    }
+    any_moose()->import({ into_level => 1 });
 
     no strict 'refs';
     *{"$caller\::__MIDDLEWARE__"} = sub {
