@@ -24,9 +24,9 @@ BEGIN
 name 'HTTP-Engine-Middleware';
 all_from 'lib/HTTP/Engine/Middleware.pm';
 
-requires 'Any::Moose'   => '0.08';
+requires 'Any::Moose'   => '0.09';
 requires 'Mouse'        => '0.23';
-requires 'HTTP::Engine' => '0.1.8';
+requires 'HTTP::Engine' => '0.02001';
 requires 'HTTP::Request';
 
 features(
