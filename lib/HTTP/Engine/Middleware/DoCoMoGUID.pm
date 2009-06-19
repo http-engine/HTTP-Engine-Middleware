@@ -6,6 +6,11 @@ use HTML::StickyQuery::DoCoMoGUID;
 after_handle {
     my ( $c, $self, $req, $res ) = @_;
 
+    unless ($req->can('mobile_attribute')) {
+        warn 'HTTP::Engine::Middleware::DoCoMoGUID is dependent on HTTP::Engine::Middleware::MobileAttribute. Please use together with HTTP::Engine::Middleware::MobileAttribute';
+        return $res;
+    }
+
     if ( $res && $res->status == 200
         && $res->content_type =~ /html/
         && not( Scalar::Util::blessed( $res->body ) )
