@@ -49,6 +49,6 @@ nekokak
 
 =head1 SEE ALSO
 
-L<HTML::StickyQuery>
+L<HTML::StickyQuery::DoCoMoGUID>
 
 =cut
