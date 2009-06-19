@@ -80,6 +80,7 @@ t/200_middlewares/uploadtemp/tmpdir_template.t
 t/htdocs/css/mobile.css
 t/htdocs/index.html
 t/htdocs/manual/index.html
+t/htdocs/null.html
 t/htdocs/robots.txt
 t/lib/Foo/Middleware/Bar.pm
 t/lib/Foo/Middleware/Baz.pm

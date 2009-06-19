@@ -69,7 +69,7 @@ run {
 
     my @config2 = (
         'HTTP::Engine::Middleware::Static' => {
-            regexp  => '(/(?:css|js|img)/(?!dynamic).+|/manual/.*|/robots\.txt)$',
+            regexp  => qr{^(/(?:css|js|img)/(?!dynamic).+|/manual/.*|/robots\.txt|/null\.html)$},
             docroot => Path::Class::Dir->new('t', 'htdocs')->stringify,
             directory_index => 'index.html',
         },
@@ -143,7 +143,7 @@ __END__
 
 === null
 --- uri: http://localhost/null.html
---- last_modified: 0
+--- last_modified: 1
 --- content_type: text/html
 --- body: \A\z
 --- code: 200
