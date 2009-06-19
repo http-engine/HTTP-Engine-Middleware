@@ -1,5 +1,11 @@
 Revision history for Perl extension HTTP::Engine::Middleware
 
+0.15    2009-06-19T20:12:49+09:00
+        - core
+          latest Mouse has a compatible interface with Moose (tokuhirom)
+        - DoCoMoGUID:
+          change dependency to HTML::StickyQuery::DoCoMoGUID
+
 0.14    2009-06-04T13:16:16+09:00
         - Static: fixed a bug around is_404_handler:
                   403 status returned when access came to the directory doesn't exist.
