@@ -3,7 +3,7 @@ use warnings;
 use Test::Base;
 use IO::Scalar;
 
-eval q{ use HTML::StickyQuery::DoCoMoGUID };
+eval q{ use HTTP::MobileAttribute; use HTML::StickyQuery::DoCoMoGUID };
 plan skip_all => "HTML::StickyQuery::DoCoMoGUID is not installed" if $@;
 
 plan tests => 2 * blocks;
@@ -12,9 +12,7 @@ use HTTP::Engine;
 use HTTP::Engine::Middleware;
 use HTTP::Engine::Response;
 use HTTP::Request;
-use HTTP::MobileAttribute plugins => [qw/
-    IS
-/];
+HTTP::MobileAttribute->load_plugins('IS');
 
 filters( {
     input    => qw/ yaml /,
