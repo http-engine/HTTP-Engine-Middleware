@@ -1,8 +1,26 @@
 package HTTP::Engine::Middleware::ReverseProxy;
 use HTTP::Engine::Middleware;
+use Any::Moose '::Util::TypeConstraints';
+
+subtype 'HTTP::Engine::Middleware::ReverseProxy::Regexp'
+    => as 'Regexp';
+coerce 'HTTP::Engine::Middleware::ReverseProxy::Regexp'
+    => from 'Str' => via {
+        qr/\A$_[0]\z/;
+    };
+
+has 'allowed_remote' => (
+    is      => 'rw',
+    isa     => 'HTTP::Engine::Middleware::ReverseProxy::Regexp',
+    default => '127.0.0.1',
+    coerce  => 1,
+);
+
 
 before_handle {
     my ( $c, $self, $req ) = @_;
+    return $req unless $req->address =~ $self->allowed_remote;
+
     my $env = $req->_connection->{env} || {};
 
     # in apache httpd.conf (RequestHeader set X-Forwarded-HTTPS %{HTTPS}s)
@@ -78,8 +96,20 @@ HTTP::Engine::Middleware::ReverseProxy - reverse-proxy support
 
 =head1 SYNOPSIS
 
+    # default proxy server is 127.0.0.1
     my $mw = HTTP::Engine::Middleware->new;
     $mw->install(qw/ HTTP::Engine::Middleware::ReverseProxy /);
+    HTTP::Engine->new(
+        interface => {
+            module => 'YourFavoriteInterfaceHere',
+            request_handler => $mw->handler( \&handler ),
+        }
+    )->run();
+
+    # allowd proxy server is 192.168.0.0/24
+    my $mw = HTTP::Engine::Middleware->new;
+    $mw->install( 'HTTP::Engine::Middleware::ReverseProxy', { allowed_remote => qr/\A192.168.0.\d+\z/ } );
+    # or $mw->install( 'HTTP::Engine::Middleware::ReverseProxy', { allowed_remote => '192.168.0.\d+' } );
     HTTP::Engine->new(
         interface => {
             module => 'YourFavoriteInterfaceHere',
