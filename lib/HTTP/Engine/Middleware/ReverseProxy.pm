@@ -12,7 +12,7 @@ coerce 'HTTP::Engine::Middleware::ReverseProxy::Regexp'
 has 'allowed_remote' => (
     is      => 'rw',
     isa     => 'HTTP::Engine::Middleware::ReverseProxy::Regexp',
-    default => '127.0.0.1',
+    default => '127\.0\.0\.1',
     coerce  => 1,
 );
 
@@ -108,8 +108,8 @@ HTTP::Engine::Middleware::ReverseProxy - reverse-proxy support
 
     # allowd proxy server is 192.168.0.0/24
     my $mw = HTTP::Engine::Middleware->new;
-    $mw->install( 'HTTP::Engine::Middleware::ReverseProxy', { allowed_remote => qr/\A192.168.0.\d+\z/ } );
-    # or $mw->install( 'HTTP::Engine::Middleware::ReverseProxy', { allowed_remote => '192.168.0.\d+' } );
+    $mw->install( 'HTTP::Engine::Middleware::ReverseProxy', { allowed_remote => qr/\A192\.168\.0\.\d+\z/ } );
+    # or $mw->install( 'HTTP::Engine::Middleware::ReverseProxy', { allowed_remote => '192\.168\.0\.\d+' } );
     HTTP::Engine->new(
         interface => {
             module => 'YourFavoriteInterfaceHere',
