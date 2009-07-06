@@ -1,5 +1,13 @@
 Revision history for Perl extension HTTP::Engine::Middleware
 
+0.17    2009-07-06T18:57:19+09:00
+        - ReverseProxy
+          !!!!! CAUTIONS !!!!! CAUTIONS !!!!! CAUTIONS !!!!! CAUTIONS !!!!! CAUTIONS !!!!!
+          It stopped working from other than a specific crient IP address.
+          Please set up the new allowed_remote option for ReverseProxy to work in your network.
+          see L<HTTP::Engine::Middleware::ReverseProxy>
+          !!!!! CAUTIONS !!!!! CAUTIONS !!!!! CAUTIONS !!!!! CAUTIONS !!!!! CAUTIONS !!!!!
+
 0.16    2009-07-02T20:00:51+09:00
         - DoCoMoGUID:
           fixed tests # RT #47477 (tokuhirom)
