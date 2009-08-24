@@ -86,7 +86,8 @@ before_handle {
 
     my $content_type = 'text/plain';
     if ($file =~ /.*\.(\S{1,})$/xms ) {
-        $content_type = $self->mime_types->mimeTypeOf($1)->type;
+        my $mime = $self->mime_types->mimeTypeOf($1);
+        $content_type = $mime->type if $mime;
     }
 
     my $fh = $file->openr;

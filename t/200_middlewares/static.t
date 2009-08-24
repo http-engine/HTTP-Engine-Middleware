@@ -49,7 +49,7 @@ run {
 
     my @config = (
         'HTTP::Engine::Middleware::Static' => {
-            regexp  => qr{^(/(?:css|js|img)/(?!dynamic).+|/manual/.*|/robots\.txt|/null\.html)$},
+            regexp  => qr{^(/(?:css|js|img)/(?!dynamic).+|/manual/.*|/robots\.txt|/null\.html|/file\.unknown_ext)$},
             docroot => Path::Class::Dir->new('t', 'htdocs'),
             directory_index => 'index.html',
         },
@@ -69,7 +69,7 @@ run {
 
     my @config2 = (
         'HTTP::Engine::Middleware::Static' => {
-            regexp  => qr{^(/(?:css|js|img)/(?!dynamic).+|/manual/.*|/robots\.txt|/null\.html)$},
+            regexp  => qr{^(/(?:css|js|img)/(?!dynamic).+|/manual/.*|/robots\.txt|/null\.html|/file\.unknown_ext)$},
             docroot => Path::Class::Dir->new('t', 'htdocs')->stringify,
             directory_index => 'index.html',
         },
@@ -146,4 +146,11 @@ __END__
 --- last_modified: 1
 --- content_type: text/html
 --- body: \A\z
+--- code: 200
+
+=== unknown extension
+--- uri: http://localhost/file.unknown_ext
+--- last_modified: 1
+--- content_type: text/plain
+--- body: unknown extension
 --- code: 200
