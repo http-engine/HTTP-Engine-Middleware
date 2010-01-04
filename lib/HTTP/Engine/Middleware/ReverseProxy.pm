@@ -38,7 +38,7 @@ before_handle {
     }
 
     if ( $req->headers->{'x-forwarded-host'} ) {
-        my $host = $req->headers->{'x-forwarded-host'};
+        my ( $host, ) = $req->headers->{'x-forwarded-host'} =~ /([^,\s]+)$/;
         if ( $host =~ /^(.+):(\d+)$/ ) {
             $host = $1;
             $env->{SERVER_PORT} = $2;

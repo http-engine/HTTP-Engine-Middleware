@@ -1,7 +1,7 @@
 use strict;
 use warnings;
 use Test::Base;
-plan tests => 25*2;
+plan tests => 32*2;
 
 use HTTP::Engine;
 use HTTP::Engine::Middleware;
@@ -173,4 +173,31 @@ x-forwarded-host: 192.168.1.5
 x-forwarded-port: 1984
 --- base: http://192.168.1.5:1984/
 --- uri:  http://192.168.1.5:1984/?foo=bar
+--- is_url_error: 1
+
+=== with HTTP_X_FORWARDED_HOST and HTTP_X_FORWARDED_PORT
+--- input
+x-forwarded-host: 192.168.1.5:1984
+x-forwarded-port: 1984
+--- base: http://192.168.1.5:1984/
+--- uri:  http://192.168.1.5:1984/?foo=bar
+--- is_url_error: 1
+
+=== with multiple HTTP_X_FORWARDED_HOST and HTTP_X_FORWARDED_FOR
+--- input
+x-forwarded-host: outmost.proxy.example.com, middle.proxy.example.com
+x-forwarded-for: 1.2.3.4, 192.168.1.6
+host: 192.168.1.7:5000
+--- address: 192.168.1.6
+--- base: http://middle.proxy.example.com/
+--- uri:  http://middle.proxy.example.com/?foo=bar
+--- is_secure_error: 1
+--- is_url_error: 1
+
+=== normal
+--- input
+host: 127.0.0.1:5000
+--- base: http://127.0.0.1:5000/
+--- uri:  http://127.0.0.1:5000/?foo=bar
+--- is_secure_error: 1
 --- is_url_error: 1
