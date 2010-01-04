@@ -1,5 +1,9 @@
 Revision history for Perl extension HTTP::Engine::Middleware
 
+0.18    2010-01-04T12:38:16+09:00
+        - ReverseProxy
+          use the last item of x-forwarded-host as host
+
 0.17    2009-07-06T18:57:19+09:00
         - ReverseProxy
           !!!!! CAUTIONS !!!!! CAUTIONS !!!!! CAUTIONS !!!!! CAUTIONS !!!!! CAUTIONS !!!!!
