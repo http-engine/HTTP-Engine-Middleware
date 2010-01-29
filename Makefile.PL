@@ -26,7 +26,7 @@ all_from 'lib/HTTP/Engine/Middleware.pm';
 
 requires 'Any::Moose'   => '0.09';
 requires 'Mouse'        => '0.23';
-requires 'HTTP::Engine' => '0.02001';
+requires 'HTTP::Engine' => '0.03004';
 requires 'HTTP::Request';
 
 features(
