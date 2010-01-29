@@ -1,5 +1,8 @@
 Revision history for Perl extension HTTP::Engine::Middleware
 
+0.19    2010-01-29T19:35:32+09:00
+        - UploadTemp is deprecated
+
 0.18    2010-01-04T12:38:16+09:00
         - ReverseProxy
           use the last item of x-forwarded-host as host

@@ -111,9 +111,57 @@ __END__
 
 =head1 NAME
 
-HTTP::Engine::Middleware::UploadTemp - temporary directory management at middleware layer
+HTTP::Engine::Middleware::UploadTemp - Deprecated. Please use $req->builder_options->{upload_tmp}
 
 =head1 SYNOPSIS
+
+please use L<HTTP::Engine::Request>'s builder_options.
+
+=head2 example
+
+  sub your_handler {
+      my $req = shift;
+      $req->builder_options->{upload_tmp} = File::Temp->newdir;
+      my $file = $req->upload('file');
+      ...
+  }
+
+any options for File::Temp
+
+  sub your_handler {
+      my $req = shift;
+      $req->builder_options->{upload_tmp} = File::Temp->newdir(
+          'FOO_XXXX',
+          DIR => '/tmp',
+      );
+      my $file = $req->upload('file');
+      ...
+  }
+
+see L<File::Temp>
+
+=head2 like lazy option
+
+  sub your_handler {
+      my $req = shift;
+      $req->builder_options->{upload_tmp} = sub { File::Temp->newdir };
+      my $file = $req->upload('file');
+      ...
+  }
+
+=head2 like keepalive option
+
+  my $cache;
+  sub your_handler {
+      my $req = shift;
+      $cache ||= File::Temp->newdir;
+      $req->builder_options->{upload_tmp} = $cache;
+      my $file = $req->upload('file');
+      ...
+  }
+
+
+=head2 OLD SYNOPSIS
 
     my $mw = HTTP::Engine::Middleware->new;
     $mw->install( 'HTTP::Engine::Middleware::UploadTemp' => {
@@ -143,7 +191,7 @@ Kazuhiro Osawa
 
 =head1 SEE ALSO
 
-L<HTTP::Engine::Middleware>, L<HTTP::Engine::Request>, L<HTTP::Engine::Request::Upload>
+L<HTTP::Engine::Request>, L<File::Temp>
 
 =cut
 
