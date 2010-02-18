@@ -23,7 +23,7 @@ run {
     my $block = shift;
 
     my $mw = HTTP::Engine::Middleware->new({ method_class => 'HTTP::Engine::Request' });
-    $mw->install( 'HTTP::Engine::Middleware::DoCoMoGUID', 'HTTP::Engine::Middleware::MobileAttribute' );
+    $mw->install( 'HTTP::Engine::Middleware::MobileAttribute', 'HTTP::Engine::Middleware::DoCoMoGUID' );
 
     my $code = sub {
         my $req = shift;
