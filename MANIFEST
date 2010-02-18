@@ -78,6 +78,7 @@ t/200_middlewares/uploadtemp/template.t
 t/200_middlewares/uploadtemp/tmpdir.t
 t/200_middlewares/uploadtemp/tmpdir_template.t
 t/htdocs/css/mobile.css
+t/htdocs/file.unknown_ext
 t/htdocs/index.html
 t/htdocs/manual/index.html
 t/htdocs/null.html

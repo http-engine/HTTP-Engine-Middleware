@@ -1,5 +1,8 @@
 Revision history for Perl extension HTTP::Engine::Middleware
 
+0.21    2010-02-18T17:22:49+09:00
+        - Static: Fixed crashing when rendering file with unknown extension
+
 0.20    2010-02-18T17:08:49+09:00
         - MobileAttribute: fixed uncleanup request object
 
