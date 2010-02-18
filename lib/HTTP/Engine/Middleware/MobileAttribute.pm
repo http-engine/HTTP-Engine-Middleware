@@ -15,6 +15,11 @@ use HTTP::MobileAttribute;
         $mobile_attribute = undef;
         $req;
     };
+
+    after_handle {
+        undef $req;
+        $_[3];
+    };
 }
 
 __MIDDLEWARE__
