@@ -1,5 +1,8 @@
 Revision history for Perl extension HTTP::Engine::Middleware
 
+0.20    2010-02-18T17:08:49+09:00
+        - MobileAttribute: fixed uncleanup request object
+
 0.19    2010-01-29T19:35:32+09:00
         - UploadTemp is deprecated
 
