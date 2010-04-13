@@ -1,7 +1,7 @@
 use strict;
 use warnings;
 use Test::Base;
-plan tests => 32*2;
+plan tests => 34*2;
 
 use HTTP::Engine;
 use HTTP::Engine::Middleware;
@@ -162,6 +162,15 @@ host: 192.168.1.2
 --- input
 host: 192.168.1.2
 https: ON
+--- base: https://192.168.1.2/
+--- uri:  https://192.168.1.2/?foo=bar
+--- is_secure_error: 1
+--- is_url_error: 1
+
+=== default https port with x-forwarded-https: on
+--- input
+host: 192.168.1.2
+x-forwarded-https: on
 --- base: https://192.168.1.2/
 --- uri:  https://192.168.1.2/?foo=bar
 --- is_secure_error: 1

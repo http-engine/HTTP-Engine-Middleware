@@ -27,7 +27,11 @@ before_handle {
     $env->{HTTPS} = $req->headers->{'x-forwarded-https'}
         if $req->headers->{'x-forwarded-https'};
     $env->{HTTPS} = 'ON' if $req->headers->{'x-forwarded-proto'};    # Pound
-    $req->secure(1) if $env->{HTTPS} && uc $env->{HTTPS} eq 'ON';
+    my $secure = 0;
+    if ( my $https = $env->{HTTPS} ) {
+        $secure = 1 if $https =~ /\AON\z/i;
+    }
+    $req->secure($secure);
     my $default_port = $req->secure ? 443 : 80;
 
     # If we are running as a backend server, the user will always appear
@@ -67,7 +71,7 @@ before_handle {
     $req->_connection->{env} = $env;
 
     for my $attr (qw/uri base/) {
-        my $scheme = $req->secure ? 'https' : 'http';
+        my $scheme = $secure ? 'https' : 'http';
         my $host = $env->{HTTP_HOST} || $env->{SERVER_NAME};
         my $port = $env->{SERVER_PORT} || undef;
         # my $path_info = $env->{PATH_INFO} || '/';
