@@ -1,5 +1,9 @@
 Revision history for Perl extension HTTP::Engine::Middleware
 
+0.22    2010-04-13T12:58:26+09:00
+        - ReverseProxy
+          case insensitive for HTTPS headers (x-forwarded-https, x-forwarded-proto)
+
 0.21    2010-02-18T17:22:49+09:00
         - Static: Fixed crashing when rendering file with unknown extension
 
