@@ -3,7 +3,7 @@ use HTTP::Engine::Middleware;
 use Any::Moose '::Util::TypeConstraints';
 
 subtype 'HTTP::Engine::Middleware::ReverseProxy::Regexp'
-    => as 'Regexp';
+    => as 'RegexpRef';
 coerce 'HTTP::Engine::Middleware::ReverseProxy::Regexp'
     => from 'Str' => via {
         qr/\A$_[0]\z/;
